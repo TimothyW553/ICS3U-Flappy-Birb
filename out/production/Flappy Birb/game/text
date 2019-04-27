@@ -1,0 +1,528 @@
+package application;
+/*
+ * NOT Flappy Bird (not to be confused with the game "Flappy Bird") *citations below*
+ * By: Max Hu and Jahn Kachura
+ *
+ * Citations:
+ * Bird: https://github.com/bhauman/flappy-bird-demo/blob/master/resources/public/imgs/flappy-base.png
+ * Background: http://digitalspyuk.cdnds.net/14/07/768x489/gallery_gaming-mock-flappy-bird-mmo-game.jpg
+ * Play Button: http://wpuploads.appadvice.com/wp-content/uploads/2014/02/Flappy-Bird-1.jpeg
+ * Game Over Screen: http://pixelartmaker.com/art/dabdcb017b41820.png
+ * Inspiration from collision code: https://stackoverflow.com/questions/15013913/checking-collision-of-shapes-with-javafx
+ * ActionEvent concept: https://stackoverflow.com/questions/50312526/javafx-actionevent-e-only-activating-one-time
+ * Music: https://youtu.be/wPZGMvX6Y-A
+ */
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Main extends Application {
+
+	//setting up global variables
+	public static Stage window;
+	public static Stage instructionsMenu;
+	public static StackPane root;
+	public static StackPane game;
+	public static StackPane instructions;
+	public static Scene titleScene;
+	public static Scene gameScene;
+	public static Scene leaderboardScene;
+	public static Scene instructionsScene;
+	public static ImageView birdView;
+	public static Button playButton;
+	public static Button restart;
+	public static Button test;
+	public static Button instructionsButton;
+	public boolean above = false;
+	public boolean move = true;
+	public boolean[] scoreCheck;
+	public static int score = 0;
+	public static int pipeCount = 999;
+	public static int[] position;
+	public static double gravity = 0;
+	public ArrayList<Rectangle> rectangleArrayList;
+	public static Text currentScore;
+	public static Text text;
+	public static Rectangle[] rectangle1 = new Rectangle[pipeCount];
+	public static Rectangle[] rectangle2 = new Rectangle[pipeCount];
+	public static AnimationTimer animation;
+	public static MediaPlayer player;
+	public static ImageView gameOver;
+	public static Ellipse hitbox;
+
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+
+
+		window = primaryStage;
+		//user will not be able to minimize or enlarge the screen
+		window.setResizable(false);
+
+		root = new StackPane();
+		game = new StackPane();
+		instructions = new StackPane();
+
+		//set up the three different scenes in this game
+		titleScene = new Scene(root,750,450);
+		gameScene = new Scene(game,750,450);
+		instructionsScene = new Scene(instructions,300,100);
+
+		//the instructions menu will be its own window that will open up upon pressing a button
+		instructionsMenu = new Stage();
+		//where the menu will appear on the screen
+		instructionsMenu.setX(1100);
+		instructionsMenu.setScene(instructionsScene);
+
+		//current score will be displayed on the screen, incrementing by one each time the
+		//bird passes through a pair of pipes
+		currentScore = new Text("Current score "+score);
+		currentScore.setTranslateY(185);
+		currentScore.setTranslateX(-185);
+		currentScore.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
+		currentScore.setFill(Color.GHOSTWHITE);
+
+
+		//creates the area of text where the instructions will appear on the menu
+		TextArea instructionsText = new TextArea();
+		instructionsText.setEditable(false);
+		instructionsText.setText("Use your up arrow to"
+				+ "\nget started. Fly the bird"
+				+ "\nas far as you can"
+				+ "\nwithout hitting a pipe.");
+		//sets the rows of words
+		instructionsText.setPrefRowCount(4);
+
+		instructionsText.setFont(Font.font(java.awt.Font.MONOSPACED, 17));
+		//makes the instructionsText visible to the user on the screen
+		instructions.getChildren().add(instructionsText);
+
+		//sets up the play button
+		Image play = new Image("file:playbutton.png", 200, 200, true, true);
+		ImageView playView = new ImageView(play);
+		//the button consists of an image of the play button
+		playButton = new Button("", playView);
+		playButton.setBackground(Background.EMPTY);
+		playButton.setTranslateY(70);
+		playButton.setOnAction(e -> {
+			//changing the scene from title to game
+			window.setScene(gameScene);
+			runningGame();
+		}
+				);
+		//makes the play button visible on the screen
+		root.getChildren().add(playButton);
+
+		//setting up the image title of the game on the title screen
+		Image title = new Image("file:flappytitle.png", 1050, 375, true, true);
+		ImageView titleView = new ImageView();
+		titleView.setImage(title);
+		titleView.setTranslateY(-50);
+		root.getChildren().add(titleView);
+
+		//game over pop-up image
+		Image over = new Image("file:gameover.png");
+		gameOver = new ImageView(over);
+		gameOver.setFitHeight(400);
+		gameOver.setFitWidth(400);
+		gameOver.setPreserveRatio(true);
+
+
+		//setting up the background
+		Image background = new Image("file:flappybackground.jpg");
+		BackgroundImage imageOfBackground = new BackgroundImage(background,
+				BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
+				BackgroundSize.DEFAULT);
+		//both the root and the game itself will have the same background
+		root.setBackground(new Background(imageOfBackground));
+		game.setBackground(new Background(imageOfBackground));
+
+		//restart button
+		restart = new Button("");
+		restart.setTranslateX(290);
+		restart.setTranslateY(185);
+		restart.setBackground(Background.EMPTY);
+		restart.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
+		restart.setTextFill(Color.GHOSTWHITE);
+		//will be implemented later after an end-game condition is detected
+
+		//sets up an instructions button
+		instructionsButton = new Button("HOW TO PLAY");
+		instructionsButton.setTranslateX(250);
+		instructionsButton.setTranslateY(185);
+		instructionsButton.setBackground(Background.EMPTY);
+		instructionsButton.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
+		instructionsButton.setTextFill(Color.GHOSTWHITE);
+		//opens up the instructions menu, which will be in another window
+		instructionsButton.setOnAction(e->
+		instructionsMenu.show()
+				);
+		root.getChildren().add(instructionsButton);
+
+
+		Music();
+
+		//showing the window
+		window.setTitle("NOT Flappy Bird");
+		window.setScene(titleScene);
+		window.show();
+
+
+	}
+	//sets the size of the pairs of pipes
+	//three preset cases concerning the size of the pipes
+	public void setSize(int i, int counter) {
+		//gets a random number from 0-2, this determines the shape of the paired pipes
+		int rand = new Random().nextInt(3);
+
+		if (rand==0) {
+			//pipes case #1
+			rectangle1[i].setHeight(200);
+			rectangle1[i].setTranslateY(36);
+
+			rectangle2[i].setHeight(100);
+			rectangle2[i].setTranslateY(-222);
+
+		}
+
+		else if (rand==1) {
+			//pipes case #2
+			rectangle1[i].setHeight(100);
+			rectangle1[i].setTranslateY(85);
+
+			rectangle2[i].setHeight(200);
+			rectangle2[i].setTranslateY(-178);
+
+		}
+		else {
+			//pipes case #3
+			rectangle1[i].setHeight(150);
+			rectangle1[i].setTranslateY(61);
+
+			rectangle2[i].setTranslateY(-192);
+			rectangle2[i].setHeight(150);
+
+		}
+		//add this to the ArrayList keeping track of all the pipes, used later when detecting collisions
+		rectangleArrayList.add(rectangle1[i]);
+		rectangleArrayList.add(rectangle2[i]);
+
+	}
+	public void runningGame() {
+		score = 0;
+
+		above = false;
+
+		currentScore.setText("Current score: "+score);
+
+		restart.setText("");
+		game.getChildren().add(restart);
+
+
+		restart.setOnMouseClicked(e->
+		{
+			//if the current game is not in session, it restarts by setting the
+			//move variable to true and clearing the the game's stackpane
+			if (!move) {
+				game.getChildren().clear();
+				move = true;
+				runningGame();
+			}
+
+		});
+
+		game.setOnKeyPressed(e->{
+			if (e.getCode() == KeyCode.UP) {
+				//if move is false, the jump method will not do anything
+				if (move) {
+					jump();
+
+				}
+				else {
+					game.getChildren().clear();
+					move = true;
+					runningGame();
+				}
+			}
+		}
+				);
+
+
+
+		Image bird = new Image("file:bird.png");
+		birdView = new ImageView();
+		birdView.setImage(bird);
+		birdView.setFitHeight(45);
+		birdView.setFitWidth(45);
+		birdView.setPreserveRatio(true);
+
+		//this is the hitbox that will be monitored for collisions
+		hitbox = new Ellipse();
+		hitbox.setRadiusX(21);
+		hitbox.setRadiusY(14);
+		hitbox.setFill(Color.TRANSPARENT);
+
+		//creates a list of the different size of the pair of pipes
+		rectangleArrayList = new ArrayList<Rectangle>();
+		position = new int[pipeCount];
+		scoreCheck = new boolean[pipeCount];
+
+		text = new Text("Press UP to start");
+		text.setTranslateY(-50);
+		text.setFont(Font.font(java.awt.Font.MONOSPACED, 50));
+		text.setFill(Color.GHOSTWHITE);
+
+
+		game.getChildren().add(text);
+		game.getChildren().add(birdView);
+		game.getChildren().add(hitbox);
+		game.getChildren().add(currentScore);
+
+		//counter determines the position of each pair of pipes on the plane
+		int counter = 0;
+
+		for (int i=0; i<pipeCount; i++) {
+			rectangle1[i] = new Rectangle();
+			rectangle2[i] = new Rectangle();
+
+			rectangle1[i].setFill(Color.rgb(66, 244, 113));
+			rectangle2[i].setFill(Color.rgb(66, 244, 113));
+
+
+			rectangle1[i].setWidth(75);
+
+			rectangle2[i].setWidth(75);
+
+			rectangle1[i].setTranslateX(600+counter);
+
+
+			rectangle2[i].setTranslateX(600+counter);
+			position[i] = 600 + counter;
+			//counter increases after each pair of pipes spawns, represents the distance between
+			//two pairs of pipes
+			counter+=250;
+
+
+			setSize(i, counter);
+		}
+
+		for (int i=0; i<pipeCount; i++) {
+			game.getChildren().add(rectangle1[i]);
+			game.getChildren().add(rectangle2[i]);
+
+		}
+
+		runGame();
+	}
+
+
+	public void jump() {
+
+		animation.start();
+		gravity = -5.1;
+
+
+		birdView.setManaged(false);
+		hitbox.setManaged(false);
+
+
+		for (int i=0; i<pipeCount; i++) {
+			rectangle1[i].setManaged(false);
+			rectangle2[i].setManaged(false);
+		}
+		text.setText("");
+
+	}
+
+
+
+	//gravity and moving pipes will be activated
+	public void runGame() {
+		animation = new AnimationTimer() {
+			public void handle(long currentNanoTime) {
+				//if the bird is above the pipes or the check method returns false, the game will stop
+				if (!check() || above) {
+					game.getChildren().add(gameOver);
+					animation.stop();
+					restart.setText("RESTART");
+					move = false;
+				}
+				//pipes start moving from the right of the screen to the left
+				pipes();
+
+				//the bird will be affected accelerate due to the gravity until a certain terminal velocity
+				if(gravity >= 12) {
+					gravity = 12;
+				}
+				else {
+					//gravity constant increases by 0.26 each frame
+					gravity += 0.26;
+				}
+
+				//updates the current position of the bird
+				update();
+
+				//sets the degrees that the bird will be rotated as the gravity of the bird changes
+				if (gravity>=0 && gravity<2) {
+					birdView.setRotate(0);
+					hitbox.setRotate(0);
+				}
+				else if (gravity>-6 && gravity<-4) {
+					birdView.setRotate(-30);
+					hitbox.setRotate(-30);
+				}
+				else if (gravity>-4 && gravity<-2) {
+					birdView.setRotate(-20);
+					hitbox.setRotate(-20);
+				}
+				else if (gravity>-2 && gravity<0) {
+					birdView.setRotate(-10);
+					hitbox.setRotate(-10);
+				}
+				else if (gravity>=2 && gravity<2.5) {
+					birdView.setRotate(10);
+					hitbox.setRotate(10);
+				}
+				else if (gravity>=2.5 && gravity<3) {
+					birdView.setRotate(20);
+					hitbox.setRotate(20);
+				}
+				else if (gravity>=3 && gravity<3.5) {
+					birdView.setRotate(30);
+					hitbox.setRotate(30);
+				}
+				else if (gravity>=3.5 && gravity<4) {
+					birdView.setRotate(40);
+					hitbox.setRotate(40);
+				}
+				else if (gravity>=4.5 && gravity<5) {
+					birdView.setRotate(50);
+					hitbox.setRotate(50);
+				}
+				else if (gravity>=5 && gravity<5.5) {
+					birdView.setRotate(60);
+					hitbox.setRotate(60);
+				}
+				else if (gravity>=5.5 && gravity<6) {
+					birdView.setRotate(70);
+					hitbox.setRotate(70);
+				}
+				else if (gravity>=6 && gravity<6.5) {
+					birdView.setRotate(80);
+					hitbox.setRotate(80);
+				}
+				else if (gravity>=6.5 && gravity<7) {
+					birdView.setRotate(90);
+					hitbox.setRotate(90);
+				}
+			}
+
+
+		};
+
+	}
+
+	//updates the bird along with its hit box's position
+	public void update() {
+		birdView.setY(birdView.getY() + gravity);
+		hitbox.setCenterY(hitbox.getCenterY()+gravity);
+
+	}
+
+
+	public void pipes() {
+		//checks if the game is still running
+		if (move) {
+			for (int i=0; i<pipeCount; i++) {
+				//moves both the bottom and upper rectangles by a set amount each frame
+				rectangle1[i].setX(rectangle1[i].getX()-2.2);
+				rectangle2[i].setX(rectangle2[i].getX()-2.2);
+
+				//score counting algorithm combined with detection concerning whether or not the
+				//bird is above the pipes, off screen.
+				if (position[i]+rectangle1[i].getX()>-50 &&
+						position[i]+rectangle1[i].getX()<50 && !scoreCheck[i]) {
+					//if the bird is on top of the pipes, it will immediately set the boolean above to true.
+					if (birdView.getY()<-200) {
+						//means if the bird is above screen, touching where one of the upper pipes should be
+						above = true;
+					}
+					//otherwise, it will simply increase the score and proceed onwards
+					else {
+						score++;
+						currentScore.setText("Current score: "+score);
+						scoreCheck[i] = true;
+					}
+
+				}
+
+			}
+		}
+	}
+	public void Music() {
+		//Gets the music file and starts it
+		String filePath = Main.class.getResource("/music/Snow halation - Love Live!.mp3").toString();
+		//happy, exciting anime music for a frustrating game
+		Media song = new Media(filePath);
+		player = new MediaPlayer(song);
+		player.setCycleCount(MediaPlayer.INDEFINITE);
+		player.play();
+		player.setVolume(0.2);
+	}
+
+
+
+	public boolean check() {
+		boolean flag = true;
+		//this would signify that the bird has touched the ground
+		if (hitbox.getCenterY()>=110) {
+			flag = false;
+		}
+		//checks if the bird has collided with any of the pipes
+		if (checkBounds(hitbox)) {
+			flag = false;
+		}
+
+		return flag;
+	}
+
+	public boolean checkBounds(Ellipse hitbox) {
+
+		boolean collision = false;
+		//loops through all the pipes, checks if any of them "intersect" with the bird's elliptical hit box
+		for (Rectangle rect : rectangleArrayList) {
+			if (hitbox.getBoundsInParent().intersects(rect.getBoundsInParent())) {
+				//once detected, sets the collision boolean to true, which will stop the animation timer
+				collision = true;
+
+			}
+
+		}
+		return collision;
+	}
+
+	public static void main(String args[]) {
+		launch(args);
+	}
+}
