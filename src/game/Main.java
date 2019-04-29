@@ -47,7 +47,7 @@ public class Main extends Application {
     public static int pipeCount = 0x3f3f3f;
     public static int[] position;
     public static double gravity = 0;
-    public static ArrayList<Rectangle> rectangles;
+    public ArrayList<Rectangle> rectangles;
     public static Text currentScore;
     public static Text text;
     public static Rectangle[] topRectangle = new Rectangle[pipeCount];
@@ -61,12 +61,12 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Stage window = primaryStage;
         window.setResizable(false);
-        root         = new StackPane();
-        game         = new StackPane();
+        root = new StackPane();
+        game = new StackPane();
         instructions = new StackPane();
 
-        titleScene       = new Scene(root, 750, 450);
-        gameScene        = new Scene(game, 750, 450);
+        titleScene = new Scene(root, 750, 450);
+        gameScene = new Scene(game, 750, 450);
         Scene instructionScene = new Scene(instructions, 750, 450);
 
         Stage instructionMenu = new Stage();
@@ -135,7 +135,7 @@ public class Main extends Application {
         });
         root.getChildren().add(instructionsButton);
 
-        MusicPlayer("/Sounds/In the Hall of the Mountain King.mp3");
+        MusicPlayer();
 
         window.setTitle("Flappy Pappy");
         window.setScene(titleScene);
@@ -143,7 +143,101 @@ public class Main extends Application {
 
     }
 
-    public static void setSize(int idx, int counter) {
+    public void runningGame() {
+        score = 0;
+        above = false;
+        currentScore.setText("Current score: "+score);
+        restart.setText("");
+        game.getChildren().add(restart);
+
+        restart.setOnMouseClicked(e-> {
+            if (!move) {
+                game.getChildren().clear();
+                move = true;
+                runningGame();
+            }
+        });
+
+        game.setOnKeyPressed(e->{
+            if (e.getCode() == KeyCode.UP) {
+                if (move) {
+                    Jump();
+                } else {
+                    game.getChildren().clear();
+                    move = true;
+                    runningGame();
+                }
+            }
+        });
+
+        Image bird = new Image("file:bird.png");
+        birdView = new ImageView();
+        birdView.setImage(bird);
+        birdView.setFitHeight(45);
+        birdView.setFitWidth(45);
+        birdView.setPreserveRatio(true);
+
+        hitbox = new Ellipse();
+        hitbox.setRadiusX(21);
+        hitbox.setRadiusY(14);
+        hitbox.setFill(Color.TRANSPARENT);
+
+        rectangles = new ArrayList<Rectangle>();
+        position = new int[pipeCount];
+        scoreCheck = new boolean[pipeCount];
+        text = new Text("Press UP to start");
+
+        text.setTranslateY(-50);
+        text.setFont(Font.font(java.awt.Font.MONOSPACED, 50));
+        text.setFill(Color.FLORALWHITE);
+
+        game.getChildren().add(text);
+        game.getChildren().add(birdView);
+        game.getChildren().add(hitbox);
+        game.getChildren().add(currentScore);
+        int counter = 0;
+        for (int i=0; i<pipeCount; i++) {
+            topRectangle[i] = new Rectangle();
+            botRectangle[i] = new Rectangle();
+
+            topRectangle[i].setFill(Color.rgb(66, 244, 113));
+            botRectangle[i].setFill(Color.rgb(66, 244, 113));
+
+            topRectangle[i].setWidth(75);
+            botRectangle[i].setWidth(75);
+            topRectangle[i].setTranslateX(600+counter);
+
+            botRectangle[i].setTranslateX(600+counter);
+            position[i] = 600 + counter;
+            counter+=250;
+            pipeSize(i, counter);
+        }
+
+        for (int i=0; i<pipeCount; i++) {
+            game.getChildren().add(topRectangle[i]);
+            game.getChildren().add(botRectangle[i]);
+
+        }
+
+        runGame();
+    }
+
+    public void Jump() {
+        animation.start();
+        gravity = -5.1;
+
+        birdView.setManaged(false);
+        hitbox.setManaged(false);
+
+        for(int i = 0; i < pipeCount; i++) {
+            topRectangle[i].setManaged(false);
+            botRectangle[i].setManaged(false);
+        }
+        text.setText("");
+    }
+
+
+    public void pipeSize(int idx, int counter) {
         int pipeGen = new Random().nextInt(4);
 
         if(pipeGen == 0) {
@@ -178,12 +272,112 @@ public class Main extends Application {
         rectangles.add(botRectangle[idx]);
     }
 
-    public static void runningGame() {
-
+    public void runGame() {
+        animation = new AnimationTimer() {
+            public void handle(long currentNanoTime) {
+                if (!check() || above) {
+                    game.getChildren().add(gameOver);
+                    animation.stop();
+                    restart.setText("RESTART");
+                    move = false;
+                }
+                pipes();
+                if(gravity >= 12) {
+                    gravity = 12;
+                } else {
+                    gravity += 0.26;
+                }
+                update();
+                if (gravity>=0 && gravity<2) {
+                    birdView.setRotate(0);
+                    hitbox.setRotate(0);
+                } else if (gravity>-6 && gravity<-4) {
+                    birdView.setRotate(-30);
+                    hitbox.setRotate(-30);
+                } else if (gravity>-4 && gravity<-2) {
+                    birdView.setRotate(-20);
+                    hitbox.setRotate(-20);
+                } else if (gravity>-2 && gravity<0) {
+                    birdView.setRotate(-10);
+                    hitbox.setRotate(-10);
+                } else if (gravity>=2 && gravity<2.5) {
+                    birdView.setRotate(10);
+                    hitbox.setRotate(10);
+                } else if (gravity>=2.5 && gravity<3) {
+                    birdView.setRotate(20);
+                    hitbox.setRotate(20);
+                } else if (gravity>=3 && gravity<3.5) {
+                    birdView.setRotate(30);
+                    hitbox.setRotate(30);
+                } else if (gravity>=3.5 && gravity<4) {
+                    birdView.setRotate(40);
+                    hitbox.setRotate(40);
+                } else if (gravity>=4.5 && gravity<5) {
+                    birdView.setRotate(50);
+                    hitbox.setRotate(50);
+                } else if (gravity>=5 && gravity<5.5) {
+                    birdView.setRotate(60);
+                    hitbox.setRotate(60);
+                } else if (gravity>=5.5 && gravity<6) {
+                    birdView.setRotate(70);
+                    hitbox.setRotate(70);
+                } else if (gravity>=6 && gravity<6.5) {
+                    birdView.setRotate(80);
+                    hitbox.setRotate(80);
+                } else if (gravity>=6.5 && gravity<7) {
+                    birdView.setRotate(90);
+                    hitbox.setRotate(90);
+                }
+            }
+        };
     }
 
-    public static void MusicPlayer(String musicPath) {
-        musicPath = Main.class.getResource(musicPath).toString();
+    public void pipes() {
+        if(move == true) {
+            for(int i = 0; i < pipeCount; i++) {
+                topRectangle[i].setX(topRectangle[i].getX() - 2.2);
+                botRectangle[i].setX(botRectangle[i].getX() - 2.2);
+                if(position[i] + topRectangle[i].getX() > -50 && position[i] + topRectangle[i].getX() < 50 && !scoreCheck[i]) {
+                    if(birdView.getY() < -200) {
+                        above = true;
+                    } else {
+                        score++;
+                        currentScore.setText("Score: " + score);
+                        scoreCheck[i] = true;
+                    }
+                }
+            }
+        }
+    }
+
+    public void update() {
+        birdView.setY(birdView.getY() - gravity);
+        hitbox.setCenterY(hitbox.getCenterY()+gravity);
+    }
+
+    public boolean checkModel(Ellipse hitbox) {
+        boolean hitOrMiss = false;
+        for(Rectangle rectangle : rectangles) {
+            if (hitbox.getBoundsInParent().intersects(rectangle.getBoundsInParent())) {
+                hitOrMiss = true;
+            }
+        }
+        return hitOrMiss;
+    }
+
+    public boolean check() {
+        boolean hitOrMiss = true;
+        if(hitbox.getCenterY() >= 110) {
+            hitOrMiss = false;
+        }
+        if(checkModel(hitbox)) {
+            hitOrMiss = true;
+        }
+        return hitOrMiss;
+    }
+
+    public void MusicPlayer() {
+        String musicPath = Main.class.getResource("/Sounds/In the Hall of the Mountain King.mp3").toString();
         Media backgroundMusic = new Media(musicPath);
         musicPlayer = new MediaPlayer(backgroundMusic);
         musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
