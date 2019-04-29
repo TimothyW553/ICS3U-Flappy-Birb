@@ -22,7 +22,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Main extends Application {
 
@@ -44,59 +45,63 @@ public class Main extends Application {
     public boolean move = true;
     public boolean[] scoreCheck;
     public static int score = 0;
-    public static int pipeCount = 0x3f3f3f;
+    public static int pipeCount = 999;
     public static int[] position;
     public static double gravity = 0;
-    public ArrayList<Rectangle> rectangles;
+    public ArrayList<Rectangle> rectangleArrayList;
     public static Text currentScore;
     public static Text text;
-    public static Rectangle[] topRectangle = new Rectangle[pipeCount];
-    public static Rectangle[] botRectangle = new Rectangle[pipeCount];
+    public static Rectangle[] rectangle1 = new Rectangle[pipeCount];
+    public static Rectangle[] rectangle2 = new Rectangle[pipeCount];
     public static AnimationTimer animation;
-    public static MediaPlayer musicPlayer;
+    public static MediaPlayer player;
     public static ImageView gameOver;
     public static Ellipse hitbox;
 
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Stage window = primaryStage;
+        window = primaryStage;
         window.setResizable(false);
+
         root = new StackPane();
         game = new StackPane();
         instructions = new StackPane();
 
         titleScene = new Scene(root, 750, 450);
         gameScene = new Scene(game, 750, 450);
-        Scene instructionScene = new Scene(instructions, 750, 450);
+        instructionsScene = new Scene(instructions, 300, 100);
 
-        Stage instructionMenu = new Stage();
-        instructionMenu.setX(1100);
-        instructionMenu.setScene(instructionScene);
+        instructionsMenu = new Stage();
+        instructionsMenu.setX(1100);
+        instructionsMenu.setScene(instructionsScene);
 
-        Text currScore = new Text("Current highscore: " + score);
-        currScore.setTranslateX(-185);
-        currScore.setTranslateY(185);
-        currScore.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
-        currScore.setFill(Color.FLORALWHITE);
+        currentScore = new Text("Current score " + score);
+        currentScore.setTranslateY(185);
+        currentScore.setTranslateX(-185);
+        currentScore.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
+        currentScore.setFill(Color.GHOSTWHITE);
 
         TextArea instructionsText = new TextArea();
         instructionsText.setEditable(false);
-        instructionsText.setText("instructions "); // TODO: FILL IN LATER
+        instructionsText.setText("Use your up arrow to"
+                + "\nget started. Fly the bird"
+                + "\nas far as you can"
+                + "\nwithout hitting a pipe.");
         instructionsText.setPrefRowCount(4);
+
         instructionsText.setFont(Font.font(java.awt.Font.MONOSPACED, 17));
         instructions.getChildren().add(instructionsText);
 
         Image play = new Image("file:playbutton.png", 200, 200, true, true);
         ImageView playView = new ImageView(play);
-
-        Button playButton = new Button("", playView);
+        playButton = new Button("", playView);
         playButton.setBackground(Background.EMPTY);
         playButton.setTranslateY(70);
         playButton.setOnAction(e -> {
             window.setScene(gameScene);
             runningGame();
         });
-
         root.getChildren().add(playButton);
 
         Image title = new Image("file:flappytitle.png", 1050, 375, true, true);
@@ -111,57 +116,92 @@ public class Main extends Application {
         gameOver.setFitWidth(400);
         gameOver.setPreserveRatio(true);
 
-        Image background = new Image("file: background.png");
-        BackgroundImage backgroundImg = new BackgroundImage(background, BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT);
-        root.setBackground(new Background(backgroundImg));
-        game.setBackground(new Background(backgroundImg));
+        Image background = new Image("file:flappybackground.jpg");
+        BackgroundImage imageOfBackground = new BackgroundImage(background,
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
+                BackgroundSize.DEFAULT);
+        root.setBackground(new Background(imageOfBackground));
+        game.setBackground(new Background(imageOfBackground));
 
         restart = new Button("");
         restart.setTranslateX(290);
         restart.setTranslateY(185);
         restart.setBackground(Background.EMPTY);
         restart.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
-        restart.setTextFill(Color.FLORALWHITE);
+        restart.setTextFill(Color.GHOSTWHITE);
 
-        instructionsButton = new Button("How to Play");
-        instructionsButton.setTranslateX(290);
+        instructionsButton = new Button("HOW TO PLAY");
+        instructionsButton.setTranslateX(250);
         instructionsButton.setTranslateY(185);
         instructionsButton.setBackground(Background.EMPTY);
         instructionsButton.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
-        instructionsButton.setTextFill(Color.FLORALWHITE);
-        instructionsButton.setOnAction(e -> {
-            instructionMenu.show();
-        });
+        instructionsButton.setTextFill(Color.GHOSTWHITE);
+
+        instructionsButton.setOnAction(e ->
+                instructionsMenu.show()
+        );
         root.getChildren().add(instructionsButton);
 
-        MusicPlayer();
+
+        Music();
 
         window.setTitle("Flappy Pappy");
         window.setScene(titleScene);
         window.show();
+
+
+    }
+
+    public void setSize(int i, int counter) {
+        int rand = new Random().nextInt(3);
+
+        if (rand == 0) {
+            rectangle1[i].setHeight(200);
+            rectangle1[i].setTranslateY(36);
+
+            rectangle2[i].setHeight(100);
+            rectangle2[i].setTranslateY(-222);
+
+        } else if (rand == 1) {
+            rectangle1[i].setHeight(100);
+            rectangle1[i].setTranslateY(85);
+
+            rectangle2[i].setHeight(200);
+            rectangle2[i].setTranslateY(-178);
+
+        } else {
+            rectangle1[i].setHeight(150);
+            rectangle1[i].setTranslateY(61);
+
+            rectangle2[i].setTranslateY(-192);
+            rectangle2[i].setHeight(150);
+
+        }
+        rectangleArrayList.add(rectangle1[i]);
+        rectangleArrayList.add(rectangle2[i]);
 
     }
 
     public void runningGame() {
         score = 0;
         above = false;
-        currentScore.setText("Current score: "+score);
+
+        currentScore.setText("Current score: " + score);
+
         restart.setText("");
         game.getChildren().add(restart);
 
-        restart.setOnMouseClicked(e-> {
-            if (!move) {
-                game.getChildren().clear();
-                move = true;
-                runningGame();
-            }
+
+        restart.setOnMouseClicked(e -> {
+            game.getChildren().clear();
+            move = true;
+            runningGame();
         });
 
-        game.setOnKeyPressed(e->{
+        game.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.UP) {
                 if (move) {
-                    Jump();
+                    jump();
                 } else {
                     game.getChildren().clear();
                     move = true;
@@ -182,96 +222,52 @@ public class Main extends Application {
         hitbox.setRadiusY(14);
         hitbox.setFill(Color.TRANSPARENT);
 
-        rectangles = new ArrayList<Rectangle>();
+        rectangleArrayList = new ArrayList<Rectangle>();
         position = new int[pipeCount];
         scoreCheck = new boolean[pipeCount];
-        text = new Text("Press UP to start");
 
+        text = new Text("Press UP to start");
         text.setTranslateY(-50);
         text.setFont(Font.font(java.awt.Font.MONOSPACED, 50));
-        text.setFill(Color.FLORALWHITE);
+        text.setFill(Color.GHOSTWHITE);
 
         game.getChildren().add(text);
         game.getChildren().add(birdView);
         game.getChildren().add(hitbox);
         game.getChildren().add(currentScore);
+
         int counter = 0;
-        for (int i=0; i<pipeCount; i++) {
-            topRectangle[i] = new Rectangle();
-            botRectangle[i] = new Rectangle();
-
-            topRectangle[i].setFill(Color.rgb(66, 244, 113));
-            botRectangle[i].setFill(Color.rgb(66, 244, 113));
-
-            topRectangle[i].setWidth(75);
-            botRectangle[i].setWidth(75);
-            topRectangle[i].setTranslateX(600+counter);
-
-            botRectangle[i].setTranslateX(600+counter);
+        for (int i = 0; i < pipeCount; i++) {
+            rectangle1[i] = new Rectangle();
+            rectangle2[i] = new Rectangle();
+            rectangle1[i].setFill(Color.rgb(66, 244, 113));
+            rectangle2[i].setFill(Color.rgb(66, 244, 113));
+            rectangle1[i].setWidth(75);
+            rectangle2[i].setWidth(75);
+            rectangle1[i].setTranslateX(600 + counter);
+            rectangle2[i].setTranslateX(600 + counter);
             position[i] = 600 + counter;
-            counter+=250;
-            pipeSize(i, counter);
+            counter += 250;
+            setSize(i, counter);
         }
-
-        for (int i=0; i<pipeCount; i++) {
-            game.getChildren().add(topRectangle[i]);
-            game.getChildren().add(botRectangle[i]);
-
+        for (int i = 0; i < pipeCount; i++) {
+            game.getChildren().add(rectangle1[i]);
+            game.getChildren().add(rectangle2[i]);
         }
-
         runGame();
     }
 
-    public void Jump() {
+    public void jump() {
         animation.start();
         gravity = -5.1;
-
         birdView.setManaged(false);
         hitbox.setManaged(false);
-
-        for(int i = 0; i < pipeCount; i++) {
-            topRectangle[i].setManaged(false);
-            botRectangle[i].setManaged(false);
+        for (int i = 0; i < pipeCount; i++) {
+            rectangle1[i].setManaged(false);
+            rectangle2[i].setManaged(false);
         }
         text.setText("");
     }
-
-
-    public void pipeSize(int idx, int counter) {
-        int pipeGen = new Random().nextInt(4);
-
-        if(pipeGen == 0) {
-            topRectangle[idx].setHeight(100);
-            topRectangle[idx].setTranslateY(36);
-
-            botRectangle[idx].setHeight(100);
-            botRectangle[idx].setTranslateY(-222);
-        }
-        else if(pipeGen == 1) {
-            topRectangle[idx].setHeight(100);
-            topRectangle[idx].setTranslateY(85);
-
-            botRectangle[idx].setHeight(100);
-            botRectangle[idx].setTranslateY(-178);
-        }
-        else if(pipeGen == 2) {
-            topRectangle[idx].setHeight(150);
-            topRectangle[idx].setTranslateY(61);
-
-            botRectangle[idx].setHeight(50);
-            botRectangle[idx].setTranslateY(-194);
-        }
-        else {
-            topRectangle[idx].setHeight(50);
-            topRectangle[idx].setTranslateY(194);
-
-            botRectangle[idx].setHeight(150);
-            botRectangle[idx].setTranslateY(-61);
-        }
-        rectangles.add(topRectangle[idx]);
-        rectangles.add(botRectangle[idx]);
-    }
-
     public void runGame() {
         animation = new AnimationTimer() {
             public void handle(long currentNanoTime) {
@@ -282,67 +278,76 @@ public class Main extends Application {
                     move = false;
                 }
                 pipes();
-                if(gravity >= 12) {
+                if (gravity >= 12) {
                     gravity = 12;
                 } else {
                     gravity += 0.26;
                 }
                 update();
-                if (gravity>=0 && gravity<2) {
+                if (gravity >= 0 && gravity < 2) {
                     birdView.setRotate(0);
                     hitbox.setRotate(0);
-                } else if (gravity>-6 && gravity<-4) {
+                } else if (gravity > -6 && gravity < -4) {
                     birdView.setRotate(-30);
                     hitbox.setRotate(-30);
-                } else if (gravity>-4 && gravity<-2) {
+                } else if (gravity > -4 && gravity < -2) {
                     birdView.setRotate(-20);
                     hitbox.setRotate(-20);
-                } else if (gravity>-2 && gravity<0) {
+                } else if (gravity > -2 && gravity < 0) {
                     birdView.setRotate(-10);
                     hitbox.setRotate(-10);
-                } else if (gravity>=2 && gravity<2.5) {
+                } else if (gravity >= 2 && gravity < 2.5) {
                     birdView.setRotate(10);
                     hitbox.setRotate(10);
-                } else if (gravity>=2.5 && gravity<3) {
+                } else if (gravity >= 2.5 && gravity < 3) {
                     birdView.setRotate(20);
                     hitbox.setRotate(20);
-                } else if (gravity>=3 && gravity<3.5) {
+                } else if (gravity >= 3 && gravity < 3.5) {
                     birdView.setRotate(30);
                     hitbox.setRotate(30);
-                } else if (gravity>=3.5 && gravity<4) {
+                } else if (gravity >= 3.5 && gravity < 4) {
                     birdView.setRotate(40);
                     hitbox.setRotate(40);
-                } else if (gravity>=4.5 && gravity<5) {
+                } else if (gravity >= 4.5 && gravity < 5) {
                     birdView.setRotate(50);
                     hitbox.setRotate(50);
-                } else if (gravity>=5 && gravity<5.5) {
+                } else if (gravity >= 5 && gravity < 5.5) {
                     birdView.setRotate(60);
                     hitbox.setRotate(60);
-                } else if (gravity>=5.5 && gravity<6) {
+                } else if (gravity >= 5.5 && gravity < 6) {
                     birdView.setRotate(70);
                     hitbox.setRotate(70);
-                } else if (gravity>=6 && gravity<6.5) {
+                } else if (gravity >= 6 && gravity < 6.5) {
                     birdView.setRotate(80);
                     hitbox.setRotate(80);
-                } else if (gravity>=6.5 && gravity<7) {
+                } else if (gravity >= 6.5 && gravity < 7) {
                     birdView.setRotate(90);
                     hitbox.setRotate(90);
                 }
             }
+
+
         };
+
+    }
+    public void update() {
+        birdView.setY(birdView.getY() + gravity);
+        hitbox.setCenterY(hitbox.getCenterY() + gravity);
     }
 
     public void pipes() {
-        if(move == true) {
-            for(int i = 0; i < pipeCount; i++) {
-                topRectangle[i].setX(topRectangle[i].getX() - 2.2);
-                botRectangle[i].setX(botRectangle[i].getX() - 2.2);
-                if(position[i] + topRectangle[i].getX() > -50 && position[i] + topRectangle[i].getX() < 50 && !scoreCheck[i]) {
-                    if(birdView.getY() < -200) {
+        if (move) {
+            for (int i = 0; i < pipeCount; i++) {
+                rectangle1[i].setX(rectangle1[i].getX() - 2.2);
+                rectangle2[i].setX(rectangle2[i].getX() - 2.2);
+                if (position[i] + rectangle1[i].getX() > -50 &&
+                        position[i] + rectangle1[i].getX() < 50 && !scoreCheck[i]) {
+                    if (birdView.getY() < -200) {
                         above = true;
-                    } else {
+                    }
+                    else {
                         score++;
-                        currentScore.setText("Score: " + score);
+                        currentScore.setText("Current score: " + score);
                         scoreCheck[i] = true;
                     }
                 }
@@ -350,42 +355,38 @@ public class Main extends Application {
         }
     }
 
-    public void update() {
-        birdView.setY(birdView.getY() - gravity);
-        hitbox.setCenterY(hitbox.getCenterY()+gravity);
+    public void Music() {
+        String filePath = Main.class.getResource("/Sounds/In the Hall of the Mountain King.mp3").toString();
+        Media song = new Media(filePath);
+        player = new MediaPlayer(song);
+        player.setCycleCount(MediaPlayer.INDEFINITE);
+        player.play();
+        player.setVolume(0.2);
     }
 
-    public boolean checkModel(Ellipse hitbox) {
-        boolean hitOrMiss = false;
-        for(Rectangle rectangle : rectangles) {
-            if (hitbox.getBoundsInParent().intersects(rectangle.getBoundsInParent())) {
-                hitOrMiss = true;
-            }
-        }
-        return hitOrMiss;
-    }
 
     public boolean check() {
-        boolean hitOrMiss = true;
-        if(hitbox.getCenterY() >= 110) {
-            hitOrMiss = false;
+        boolean flag = true;
+        if (hitbox.getCenterY() >= 110) {
+            flag = false;
         }
-        if(checkModel(hitbox)) {
-            hitOrMiss = true;
+        if (checkBounds(hitbox)) {
+            flag = false;
         }
-        return hitOrMiss;
+        return flag;
     }
 
-    public void MusicPlayer() {
-        String musicPath = Main.class.getResource("/Sounds/In the Hall of the Mountain King.mp3").toString();
-        Media backgroundMusic = new Media(musicPath);
-        musicPlayer = new MediaPlayer(backgroundMusic);
-        musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        musicPlayer.play();
-        musicPlayer.setVolume(0.5);
+    public boolean checkBounds(Ellipse hitbox) {
+        boolean collision = false;
+        for (Rectangle rect : rectangleArrayList) {
+            if (hitbox.getBoundsInParent().intersects(rect.getBoundsInParent())) {
+                collision = true;
+            }
+        }
+        return collision;
     }
 
-    public static void main(String[] args) {
+    public static void main(String args[]) {
         launch(args);
     }
 }
