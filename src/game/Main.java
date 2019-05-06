@@ -96,7 +96,7 @@ public class Main extends Application {
         TextArea instructionsText = new TextArea();
         instructionsText.setEditable(false);
         //The code below is the text for the instruction page
-        instructionsText.setText("Use the A button to" + "\nget started. Fly the bird" + "\nas far as you can" + "\nwithout hitting a pipe.");
+        instructionsText.setText("Use the W button to" + "\nget started. Fly the bird" + "\nas far as you can" + "\nwithout hitting a pipe.");
         instructionsText.setPrefRowCount(4);
 
         instructionsText.setFont(Font.font(java.awt.Font.SANS_SERIF, 17));
@@ -207,7 +207,7 @@ public class Main extends Application {
         });
 
         game.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.A) {
+            if (e.getCode() == KeyCode.W) {
                 if (move) {
                     jump();
                 } else {
@@ -234,7 +234,7 @@ public class Main extends Application {
         position = new int[pipeCount];
         scoreCheck = new boolean[pipeCount];
 
-        text = new Text("Press A to start");
+        text = new Text("Press W to start");
         text.setTranslateY(-50);
         text.setFont(Font.font(java.awt.Font.SANS_SERIF, 50));
         text.setFill(Color.GHOSTWHITE);
