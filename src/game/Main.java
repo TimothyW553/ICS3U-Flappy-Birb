@@ -22,6 +22,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -47,9 +50,11 @@ public class Main extends Application {
     public static int score = 0;
     public static int pipeCount = 999;
     public static int[] position;
+    public static int highScore = 0;//int for High Score
     public static double gravity = 0;
     public ArrayList<Rectangle> rectangleArrayList;
-    public static Text currentScore;
+    public static Text currentScore; //Text for Current Score
+    public static Text maxScore; //Text for High Score
     public static Text text;
     public static Rectangle[] rectangle1 = new Rectangle[pipeCount];
     public static Rectangle[] rectangle2 = new Rectangle[pipeCount];
@@ -79,20 +84,24 @@ public class Main extends Application {
         currentScore = new Text("Current score " + score);
         currentScore.setTranslateY(185);
         currentScore.setTranslateX(-185);
-        currentScore.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
+        currentScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
         currentScore.setFill(Color.GHOSTWHITE);
+
+        maxScore = new Text("High Score" + score);
+        maxScore.setTranslateY(-200);
+        maxScore.setTranslateX(0);
+        maxScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
+        maxScore.setFill(Color.GHOSTWHITE);
 
         TextArea instructionsText = new TextArea();
         instructionsText.setEditable(false);
-        instructionsText.setText("Use your up arrow to"
-                + "\nget started. Fly the bird"
-                + "\nas far as you can"
-                + "\nwithout hitting a pipe.");
+        //The code below is the text for the instruction page
+        instructionsText.setText("Use the A button to" + "\nget started. Fly the bird" + "\nas far as you can" + "\nwithout hitting a pipe.");
         instructionsText.setPrefRowCount(4);
 
-        instructionsText.setFont(Font.font(java.awt.Font.MONOSPACED, 17));
+        instructionsText.setFont(Font.font(java.awt.Font.SANS_SERIF, 17));
         instructions.getChildren().add(instructionsText);
-
+        //The line bellow inserts the play button image for the start menu
         Image play = new Image("file:playbutton.png", 200, 200, true, true);
         ImageView playView = new ImageView(play);
         playButton = new Button("", playView);
@@ -103,19 +112,19 @@ public class Main extends Application {
             runningGame();
         });
         root.getChildren().add(playButton);
-
+        //The line bellow inserts the game title file for the intro menu
         Image title = new Image("file:flappytitle.png", 1050, 375, true, true);
         ImageView titleView = new ImageView();
         titleView.setImage(title);
         titleView.setTranslateY(-50);
         root.getChildren().add(titleView);
-
+        //The line bellow inserts the game over logo.
         Image over = new Image("file:gameover.png");
         gameOver = new ImageView(over);
         gameOver.setFitHeight(400);
         gameOver.setFitWidth(400);
         gameOver.setPreserveRatio(true);
-
+        //The line bellow inserts the image that will be the background of the game.
         Image background = new Image("file:flappybackground.jpg");
         BackgroundImage imageOfBackground = new BackgroundImage(background,
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
@@ -127,14 +136,14 @@ public class Main extends Application {
         restart.setTranslateX(290);
         restart.setTranslateY(185);
         restart.setBackground(Background.EMPTY);
-        restart.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
+        restart.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
         restart.setTextFill(Color.GHOSTWHITE);
 
         instructionsButton = new Button("HOW TO PLAY");
         instructionsButton.setTranslateX(250);
         instructionsButton.setTranslateY(185);
         instructionsButton.setBackground(Background.EMPTY);
-        instructionsButton.setFont(Font.font(java.awt.Font.MONOSPACED, 33));
+        instructionsButton.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
         instructionsButton.setTextFill(Color.GHOSTWHITE);
 
         instructionsButton.setOnAction(e ->
@@ -187,10 +196,9 @@ public class Main extends Application {
         above = false;
 
         currentScore.setText("Current score: " + score);
-
+        maxScore.setText("High Score: " + highScore);
         restart.setText("");
         game.getChildren().add(restart);
-
 
         restart.setOnMouseClicked(e -> {
             game.getChildren().clear();
@@ -199,7 +207,7 @@ public class Main extends Application {
         });
 
         game.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.UP) {
+            if (e.getCode() == KeyCode.A) {
                 if (move) {
                     jump();
                 } else {
@@ -209,7 +217,7 @@ public class Main extends Application {
                 }
             }
         });
-
+        //The line bellow iserts the image of the bird.
         Image bird = new Image("file:bird.png");
         birdView = new ImageView();
         birdView.setImage(bird);
@@ -226,22 +234,23 @@ public class Main extends Application {
         position = new int[pipeCount];
         scoreCheck = new boolean[pipeCount];
 
-        text = new Text("Press UP to start");
+        text = new Text("Press A to start");
         text.setTranslateY(-50);
-        text.setFont(Font.font(java.awt.Font.MONOSPACED, 50));
+        text.setFont(Font.font(java.awt.Font.SANS_SERIF, 50));
         text.setFill(Color.GHOSTWHITE);
 
         game.getChildren().add(text);
         game.getChildren().add(birdView);
         game.getChildren().add(hitbox);
         game.getChildren().add(currentScore);
+        game.getChildren().add(maxScore);
 
         int counter = 0;
         for (int i = 0; i < pipeCount; i++) {
             rectangle1[i] = new Rectangle();
             rectangle2[i] = new Rectangle();
-            rectangle1[i].setFill(Color.rgb(66, 244, 113));
-            rectangle2[i].setFill(Color.rgb(66, 244, 113));
+            rectangle1[i].setFill(Color.rgb(53, 200, 0));
+            rectangle2[i].setFill(Color.rgb(53, 200, 0));
             rectangle1[i].setWidth(75);
             rectangle2[i].setWidth(75);
             rectangle1[i].setTranslateX(600 + counter);
@@ -268,6 +277,7 @@ public class Main extends Application {
         }
         text.setText("");
     }
+    //The code for the start of the game goes here
     public void runGame() {
         animation = new AnimationTimer() {
             public void handle(long currentNanoTime) {
@@ -277,6 +287,8 @@ public class Main extends Application {
                     restart.setText("RESTART");
                     move = false;
                 }
+
+
                 pipes();
                 if (gravity >= 12) {
                     gravity = 12;
@@ -348,12 +360,21 @@ public class Main extends Application {
                     else {
                         score++;
                         currentScore.setText("Current score: " + score);
+                        //The line bellow compares if the current High Score is lower than the current score so it can update it
+                        if (highScore<score) {
+                            highScore = score;
+                            System.out.println("highscore " + highScore);
+                        }
+                        maxScore.setText("High Score: " + highScore);
                         scoreCheck[i] = true;
                     }
                 }
             }
         }
-    }
+
+
+        }
+
 
     public void Music() {
         String filePath = Main.class.getResource("/Sounds/In the Hall of the Mountain King.mp3").toString();
@@ -375,6 +396,7 @@ public class Main extends Application {
         }
         return flag;
     }
+
 
     public boolean checkBounds(Ellipse hitbox) {
         boolean collision = false;
