@@ -23,8 +23,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -58,6 +57,8 @@ public class Main extends Application {
     public static Text text;
     public static Rectangle[] rectangle1 = new Rectangle[pipeCount];
     public static Rectangle[] rectangle2 = new Rectangle[pipeCount];
+    public static Rectangle[] rectangle3 = new Rectangle[pipeCount];
+    public static Rectangle[] rectangle4 = new Rectangle[pipeCount];
     public static AnimationTimer animation;
     public static MediaPlayer player;
     public static ImageView gameOver;
@@ -68,7 +69,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
         window.setResizable(false);
-
         root = new StackPane();
         game = new StackPane();
         instructions = new StackPane();
@@ -204,6 +204,7 @@ public class Main extends Application {
             game.getChildren().clear();
             move = true;
             runningGame();
+
         });
 
         game.setOnKeyPressed(e -> {
@@ -255,6 +256,7 @@ public class Main extends Application {
             rectangle2[i].setWidth(75);
             rectangle1[i].setTranslateX(600 + counter);
             rectangle2[i].setTranslateX(600 + counter);
+
             position[i] = 600 + counter;
             counter += 250;
             setSize(i, counter);
@@ -363,7 +365,15 @@ public class Main extends Application {
                         //The line bellow compares if the current High Score is lower than the current score so it can update it
                         if (highScore<score) {
                             highScore = score;
-                            System.out.println("highscore " + highScore);
+                            System.out.println(highScore);
+                            PrintWriter out = null;
+                            try {
+                                out = new PrintWriter(new FileWriter("HighScore.txt"));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            out.println(highScore);
+                            out.close();
                         }
                         maxScore.setText("High Score: " + highScore);
                         scoreCheck[i] = true;
