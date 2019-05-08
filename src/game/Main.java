@@ -18,11 +18,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 import javax.swing.text.Highlighter;
 import java.io.*;
 import java.util.ArrayList;
@@ -54,13 +54,13 @@ public class Main extends Application {
     public static int globalHighScore = 0;
     public static double gravity = 0;
     public ArrayList<Rectangle> rectangleArrayList;
+    public ArrayList<Circle> coinsArrayList;
     public static Text currentScore; //Text for Current Score
     public static Text maxScore; //Text for High Score
     public static Text text;
-    public static Rectangle[] rectangle1 = new Rectangle[pipeCount];
-    public static Rectangle[] rectangle2 = new Rectangle[pipeCount];
-    public static Rectangle[] rectangle3 = new Rectangle[pipeCount];
-    public static Rectangle[] rectangle4 = new Rectangle[pipeCount];
+    public static Rectangle[] rectangleTop = new Rectangle[pipeCount];
+    public static Rectangle[] rectangleBot = new Rectangle[pipeCount];
+    public static Circle[] coins = new Circle[pipeCount];
     public static AnimationTimer animation;
     public static MediaPlayer player;
     public static ImageView gameOver;
@@ -167,29 +167,36 @@ public class Main extends Application {
         int rand = new Random().nextInt(3);
 
         if (rand == 0) {
-            rectangle1[i].setHeight(200);
-            rectangle1[i].setTranslateY(36);
+            rectangleTop[i].setHeight(200);
+            rectangleTop[i].setTranslateY(36);
 
-            rectangle2[i].setHeight(100);
-            rectangle2[i].setTranslateY(-222);
+            rectangleBot[i].setHeight(100);
+            rectangleBot[i].setTranslateY(-222);
+
+            coins[i].setTranslateY(-50);
 
         } else if (rand == 1) {
-            rectangle1[i].setHeight(100);
-            rectangle1[i].setTranslateY(85);
+            rectangleTop[i].setHeight(100);
+            rectangleTop[i].setTranslateY(85);
 
-            rectangle2[i].setHeight(200);
-            rectangle2[i].setTranslateY(-178);
+            rectangleBot[i].setHeight(200);
+            rectangleBot[i].setTranslateY(-178);
+
+            coins[i].setTranslateY(-50);
 
         } else {
-            rectangle1[i].setHeight(150);
-            rectangle1[i].setTranslateY(61);
+            rectangleTop[i].setHeight(150);
+            rectangleTop[i].setTranslateY(61);
 
-            rectangle2[i].setTranslateY(-192);
-            rectangle2[i].setHeight(150);
+            rectangleBot[i].setTranslateY(-192);
+            rectangleBot[i].setHeight(150);
+
+            coins[i].setTranslateY(-50);
 
         }
-        rectangleArrayList.add(rectangle1[i]);
-        rectangleArrayList.add(rectangle2[i]);
+        rectangleArrayList.add(rectangleTop[i]);
+        rectangleArrayList.add(rectangleBot[i]);
+        coinsArrayList.add(coins[i]);
 
     }
 
@@ -234,6 +241,7 @@ public class Main extends Application {
         hitbox.setFill(Color.TRANSPARENT);
 
         rectangleArrayList = new ArrayList<Rectangle>();
+        coinsArrayList = new ArrayList<Circle>();
         position = new int[pipeCount];
         scoreCheck = new boolean[pipeCount];
 
@@ -250,22 +258,27 @@ public class Main extends Application {
 
         int counter = 0;
         for (int i = 0; i < pipeCount; i++) {
-            rectangle1[i] = new Rectangle();
-            rectangle2[i] = new Rectangle();
-            rectangle1[i].setFill(Color.rgb(53, 200, 0));
-            rectangle2[i].setFill(Color.rgb(53, 200, 0));
-            rectangle1[i].setWidth(75);
-            rectangle2[i].setWidth(75);
-            rectangle1[i].setTranslateX(600 + counter);
-            rectangle2[i].setTranslateX(600 + counter);
+            rectangleTop[i] = new Rectangle();
+            rectangleBot[i] = new Rectangle();
+            coins[i] = new Circle();
+            rectangleTop[i].setFill(Color.rgb(53, 200, 0));
+            rectangleBot[i].setFill(Color.rgb(53, 200, 0));
+            coins[i].setFill(Color.YELLOW);
+            coins[i].setRadius(100);
+            rectangleTop[i].setWidth(75);
+            rectangleBot[i].setWidth(75);
+            rectangleTop[i].setTranslateX(600 + counter);
+            rectangleBot[i].setTranslateX(600 + counter);
+            coins[i].setTranslateX(600 + counter);
 
             position[i] = 600 + counter;
             counter += 250;
             setSize(i, counter);
         }
         for (int i = 0; i < pipeCount; i++) {
-            game.getChildren().add(rectangle1[i]);
-            game.getChildren().add(rectangle2[i]);
+            game.getChildren().add(rectangleTop[i]);
+            game.getChildren().add(rectangleBot[i]);
+            game.getChildren().add(coins[i]);
         }
         runGame();
     }
@@ -276,8 +289,9 @@ public class Main extends Application {
         birdView.setManaged(false);
         hitbox.setManaged(false);
         for (int i = 0; i < pipeCount; i++) {
-            rectangle1[i].setManaged(false);
-            rectangle2[i].setManaged(false);
+            rectangleTop[i].setManaged(false);
+            rectangleBot[i].setManaged(false);
+            coins[i].setManaged(false);
         }
         text.setText("");
     }
@@ -354,10 +368,10 @@ public class Main extends Application {
     public void pipes() {
         if (move) {
             for (int i = 0; i < pipeCount; i++) {
-                rectangle1[i].setX(rectangle1[i].getX() - 2.2);
-                rectangle2[i].setX(rectangle2[i].getX() - 2.2);
-                if (position[i] + rectangle1[i].getX() > -50 &&
-                        position[i] + rectangle1[i].getX() < 50 && !scoreCheck[i]) {
+                rectangleTop[i].setX(rectangleTop[i].getX() - 2.2);
+                rectangleBot[i].setX(rectangleBot[i].getX() - 2.2);
+                if (position[i] + rectangleTop[i].getX() > -50 &&
+                        position[i] + rectangleTop[i].getX() < 50 && !scoreCheck[i]) {
                     if (birdView.getY() < -200) {
                         above = true;
                     }
@@ -374,22 +388,22 @@ public class Main extends Application {
                             //The code here will add the new Value of the high score to the text file
 
 
-                                try {
-                                    out = new PrintWriter(new FileWriter("HighScore.txt"));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                out.println(highScore);
-                                out.close();
+                            try {
+                                out = new PrintWriter(new FileWriter("HighScore.txt"));
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
+                            out.println(highScore);
+                            out.close();
                         }
-
-                        maxScore.setText("High Score: " + highScore);
-                        scoreCheck[i] = true;
                     }
+
+                    maxScore.setText("High Score: " + highScore);
+                    scoreCheck[i] = true;
                 }
             }
         }
+    }
 
 
 
