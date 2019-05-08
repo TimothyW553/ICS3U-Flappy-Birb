@@ -57,8 +57,6 @@ public class Main extends Application {
     public static Text text;
     public static Rectangle[] rectangle1 = new Rectangle[pipeCount];
     public static Rectangle[] rectangle2 = new Rectangle[pipeCount];
-    public static Rectangle[] rectangle3 = new Rectangle[pipeCount];
-    public static Rectangle[] rectangle4 = new Rectangle[pipeCount];
     public static AnimationTimer animation;
     public static MediaPlayer player;
     public static ImageView gameOver;
@@ -88,8 +86,8 @@ public class Main extends Application {
         currentScore.setFill(Color.GHOSTWHITE);
 
         maxScore = new Text("High Score" + score);
-        maxScore.setTranslateY(185);
-        maxScore.setTranslateX(70);
+        maxScore.setTranslateY(-200);
+        maxScore.setTranslateX(0);
         maxScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
         maxScore.setFill(Color.GHOSTWHITE);
 
@@ -362,7 +360,7 @@ public class Main extends Application {
                     else {
                         score++;
                         currentScore.setText("Current score: " + score);
-                        //The line bellow compares if the current High Score is lower than the current score so it can update iwt
+                        //The line bellow compares if the current High Score is lower than the current score so it can update it
                         if (highScore<score) {
                             highScore = score;
                             System.out.println(highScore);
@@ -383,8 +381,7 @@ public class Main extends Application {
         }
 
 
-
-        }
+    }
 
 
     public void Music() {
