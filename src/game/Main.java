@@ -23,6 +23,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import javax.swing.text.Highlighter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -50,6 +51,7 @@ public class Main extends Application {
     public static int pipeCount = 999;
     public static int[] position;
     public static int highScore = 0;//int for High Score
+    public static int globalHighScore = 0;
     public static double gravity = 0;
     public ArrayList<Rectangle> rectangleArrayList;
     public static Text currentScore; //Text for Current Score
@@ -57,6 +59,8 @@ public class Main extends Application {
     public static Text text;
     public static Rectangle[] rectangle1 = new Rectangle[pipeCount];
     public static Rectangle[] rectangle2 = new Rectangle[pipeCount];
+    public static Rectangle[] rectangle3 = new Rectangle[pipeCount];
+    public static Rectangle[] rectangle4 = new Rectangle[pipeCount];
     public static AnimationTimer animation;
     public static MediaPlayer player;
     public static ImageView gameOver;
@@ -86,8 +90,8 @@ public class Main extends Application {
         currentScore.setFill(Color.GHOSTWHITE);
 
         maxScore = new Text("High Score" + score);
-        maxScore.setTranslateY(-200);
-        maxScore.setTranslateX(0);
+        maxScore.setTranslateY(185);
+        maxScore.setTranslateX(70);
         maxScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
         maxScore.setFill(Color.GHOSTWHITE);
 
@@ -277,7 +281,6 @@ public class Main extends Application {
         }
         text.setText("");
     }
-
     //The code for the start of the game goes here
     public void runGame() {
         animation = new AnimationTimer() {
@@ -343,7 +346,6 @@ public class Main extends Application {
         };
 
     }
-
     public void update() {
         birdView.setY(birdView.getY() + gravity);
         hitbox.setCenterY(hitbox.getCenterY() + gravity);
@@ -358,22 +360,30 @@ public class Main extends Application {
                         position[i] + rectangle1[i].getX() < 50 && !scoreCheck[i]) {
                     if (birdView.getY() < -200) {
                         above = true;
-                    } else {
+                    }
+                    else {
                         score++;
                         currentScore.setText("Current score: " + score);
-                        //The line bellow compares if the current High Score is lower than the current score so it can update it
-                        if (highScore < score) {
+                        //Here the Value og highScore should update form 0 to the value in the text doc
+
+                        //The line bellow compares if the current High Score is lower than the current score so it can update the high score
+                        if (highScore<score) {
                             highScore = score;
                             System.out.println(highScore);
                             PrintWriter out = null;
-                            try {
-                                out = new PrintWriter(new FileWriter("HighScore.txt"));
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            //The code here will add the new Value of the high score to the text file
+
+
+                                try {
+                                    out = new PrintWriter(new FileWriter("HighScore.txt"));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                out.println(highScore);
+                                out.close();
                             }
-                            out.println(highScore);
-                            out.close();
                         }
+
                         maxScore.setText("High Score: " + highScore);
                         scoreCheck[i] = true;
                     }
@@ -382,7 +392,8 @@ public class Main extends Application {
         }
 
 
-    }
+
+
 
 
     public void Music() {
