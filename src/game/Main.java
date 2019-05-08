@@ -277,6 +277,7 @@ public class Main extends Application {
         }
         text.setText("");
     }
+
     //The code for the start of the game goes here
     public void runGame() {
         animation = new AnimationTimer() {
@@ -342,6 +343,7 @@ public class Main extends Application {
         };
 
     }
+
     public void update() {
         birdView.setY(birdView.getY() + gravity);
         hitbox.setCenterY(hitbox.getCenterY() + gravity);
@@ -356,12 +358,11 @@ public class Main extends Application {
                         position[i] + rectangle1[i].getX() < 50 && !scoreCheck[i]) {
                     if (birdView.getY() < -200) {
                         above = true;
-                    }
-                    else {
+                    } else {
                         score++;
                         currentScore.setText("Current score: " + score);
                         //The line bellow compares if the current High Score is lower than the current score so it can update it
-                        if (highScore<score) {
+                        if (highScore < score) {
                             highScore = score;
                             System.out.println(highScore);
                             PrintWriter out = null;
