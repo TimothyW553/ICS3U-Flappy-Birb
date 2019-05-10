@@ -201,7 +201,9 @@ public class Main extends Application {
     public void runningGame() {
         score = 0;
         above = false;
-
+        //High score value has to be get from the text and the value of High score has to be updated from 0 to the value in the text file
+        
+        //
         currentScore.setText("Current score: " + score);
         maxScore.setText("High Score: " + highScore);
         restart.setText("");
@@ -378,8 +380,6 @@ public class Main extends Application {
                         score += 2;
                         coins[i].setFill(Color.TRANSPARENT);
                         currentScore.setText("Current score: " + score);
-                        //Here the Value og highScore should update form 0 to the value in the text doc
-
                         //The line bellow compares if the current High Score is lower than the current score so it can update the high score
                         if (highScore<score) {
                             highScore = score;
