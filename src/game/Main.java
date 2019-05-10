@@ -54,13 +54,13 @@ public class Main extends Application {
     public static int globalHighScore = 0;
     public static double gravity = 0;
     public ArrayList<Rectangle> rectangleArrayList;
-    public ArrayList<Circle> coinsArrayList;
+    public ArrayList<Rectangle> coinsArrayList;
     public static Text currentScore; //Text for Current Score
     public static Text maxScore; //Text for High Score
     public static Text text;
     public static Rectangle[] rectangleTop = new Rectangle[pipeCount];
     public static Rectangle[] rectangleBot = new Rectangle[pipeCount];
-    public static Circle[] coins = new Circle[pipeCount];
+    public static Rectangle[] coins = new Rectangle[pipeCount];
     public static AnimationTimer animation;
     public static MediaPlayer player;
     public static ImageView gameOver;
@@ -239,7 +239,7 @@ public class Main extends Application {
         hitbox.setFill(Color.TRANSPARENT);
 
         rectangleArrayList = new ArrayList<Rectangle>();
-        coinsArrayList = new ArrayList<Circle>();
+        coinsArrayList = new ArrayList<>();
         position = new int[pipeCount];
         scoreCheck = new boolean[pipeCount];
 
@@ -258,11 +258,12 @@ public class Main extends Application {
         for (int i = 0; i < pipeCount; i++) {
             rectangleTop[i] = new Rectangle();
             rectangleBot[i] = new Rectangle();
-            coins[i] = new Circle();
+            coins[i] = new Rectangle();
             rectangleTop[i].setFill(Color.rgb(53, 200, 0));
             rectangleBot[i].setFill(Color.rgb(53, 200, 0));
             coins[i].setFill(Color.YELLOW);
-            coins[i].setRadius(10);
+            coins[i].setWidth(15);
+            coins[i].setHeight(15);
             rectangleTop[i].setWidth(75);
             rectangleBot[i].setWidth(75);
             rectangleTop[i].setTranslateX(600 + counter);
@@ -303,7 +304,6 @@ public class Main extends Application {
                     restart.setText("RESTART");
                     move = false;
                 }
-
 
                 pipes();
                 if (gravity >= 12) {
@@ -368,14 +368,15 @@ public class Main extends Application {
             for (int i = 0; i < pipeCount; i++) {
                 rectangleTop[i].setX(rectangleTop[i].getX() - 2.2);
                 rectangleBot[i].setX(rectangleBot[i].getX() - 2.2);
-                coins[i].setCenterX(coins[i].getCenterX() - 2.2);
-                if (position[i] + rectangleTop[i].getX() > -50 &&
-                        position[i] + rectangleTop[i].getX() < 50 && !scoreCheck[i]) {
+                coins[i].setX(coins[i].getX() - 2.2);
+                if (position[i] + rectangleTop[i].getX() > -25 &&
+                        position[i] + rectangleTop[i].getX() < 25 && !scoreCheck[i]) {
                     if (birdView.getY() < -200) {
                         above = true;
                     }
                     else {
-                        score++;
+                        score += 2;
+                        coins[i].setFill(Color.TRANSPARENT);
                         currentScore.setText("Current score: " + score);
                         //Here the Value og highScore should update form 0 to the value in the text doc
 
@@ -426,6 +427,14 @@ public class Main extends Application {
         return flag;
     }
 
+    public boolean checkCoin() {
+        boolean flag = false;
+        if(coinCollected(hitbox)) {
+            flag = true;
+        }
+        return flag;
+    }
+
 
     public boolean checkBounds(Ellipse hitbox) {
         boolean collision = false;
@@ -435,6 +444,16 @@ public class Main extends Application {
             }
         }
         return collision;
+    }
+
+    public boolean coinCollected(Ellipse hitbox) {
+        boolean collected = false;
+        for (Rectangle coin : coinsArrayList) {
+            if(hitbox.getBoundsInParent().intersects(coin.getBoundsInParent())) {
+                collected = true;
+            }
+        }
+        return collected;
     }
 
     public static void main(String args[]) {
