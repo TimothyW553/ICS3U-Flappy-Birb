@@ -173,8 +173,7 @@ public class Main extends Application {
             rectangleBot[i].setHeight(100);
             rectangleBot[i].setTranslateY(-222);
 
-            coins[i].setTranslateY(-50);
-
+            coins[i].setTranslateY(-110);
         } else if (rand == 1) {
             rectangleTop[i].setHeight(100);
             rectangleTop[i].setTranslateY(85);
@@ -182,8 +181,7 @@ public class Main extends Application {
             rectangleBot[i].setHeight(200);
             rectangleBot[i].setTranslateY(-178);
 
-            coins[i].setTranslateY(-50);
-
+            coins[i].setTranslateY(-20);
         } else {
             rectangleTop[i].setHeight(150);
             rectangleTop[i].setTranslateY(61);
@@ -191,9 +189,9 @@ public class Main extends Application {
             rectangleBot[i].setTranslateY(-192);
             rectangleBot[i].setHeight(150);
 
-            coins[i].setTranslateY(-50);
-
+            coins[i].setTranslateY(-60);
         }
+
         rectangleArrayList.add(rectangleTop[i]);
         rectangleArrayList.add(rectangleBot[i]);
         coinsArrayList.add(coins[i]);
@@ -264,7 +262,7 @@ public class Main extends Application {
             rectangleTop[i].setFill(Color.rgb(53, 200, 0));
             rectangleBot[i].setFill(Color.rgb(53, 200, 0));
             coins[i].setFill(Color.YELLOW);
-            coins[i].setRadius(100);
+            coins[i].setRadius(10);
             rectangleTop[i].setWidth(75);
             rectangleBot[i].setWidth(75);
             rectangleTop[i].setTranslateX(600 + counter);
@@ -370,6 +368,7 @@ public class Main extends Application {
             for (int i = 0; i < pipeCount; i++) {
                 rectangleTop[i].setX(rectangleTop[i].getX() - 2.2);
                 rectangleBot[i].setX(rectangleBot[i].getX() - 2.2);
+                coins[i].setCenterX(coins[i].getCenterX() - 2.2);
                 if (position[i] + rectangleTop[i].getX() > -50 &&
                         position[i] + rectangleTop[i].getX() < 50 && !scoreCheck[i]) {
                     if (birdView.getY() < -200) {
@@ -404,10 +403,6 @@ public class Main extends Application {
             }
         }
     }
-
-
-
-
 
 
     public void Music() {
