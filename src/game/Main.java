@@ -27,6 +27,9 @@ import javax.swing.text.Highlighter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Main extends Application {
 
@@ -202,7 +205,15 @@ public class Main extends Application {
         score = 0;
         above = false;
         //High score value has to be get from the text and the value of High score has to be updated from 0 to the value in the text file
-        
+        try (BufferedReader br = new BufferedReader(new FileReader("HighScore.txt"))) {
+            String  sCurrentLine;
+            while ((sCurrentLine = br.readLine()) != null) {
+                highScore = Integer.parseInt(sCurrentLine);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(highScore);
+        }
         //
         currentScore.setText("Current score: " + score);
         maxScore.setText("High Score: " + highScore);
