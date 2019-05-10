@@ -212,7 +212,6 @@ public class Main extends Application {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println(highScore);
         }
         //
         currentScore.setText("Current score: " + score);
