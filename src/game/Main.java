@@ -1,4 +1,4 @@
-/* Group Members: Timothy Wang and Alireza Azimi Tabrizi 
+/* Group Members: Timothy Wang and Alireza Azimi Tabrizi
  * Game Name: Flappy Pappy
  * Work Cited Links:
  *
@@ -135,9 +135,9 @@ public class Main extends Application {
         playButton.setBackground(Background.EMPTY);
         //Sets the location of the button
         playButton.setTranslateY(70);
+        //If the button is clicked, the runningGame method will run.
         playButton.setOnAction(e -> {
             window.setScene(gameScene);
-            //If the button is clicked, the runningGame method will run.
             runningGame();
         });
         //Displays the playButton
@@ -161,7 +161,7 @@ public class Main extends Application {
                 BackgroundSize.DEFAULT);
         root.setBackground(new Background(imageOfBackground));
         game.setBackground(new Background(imageOfBackground));
-
+        //A button is made named restart
         restart = new Button("");
         restart.setTranslateX(290);
         restart.setTranslateY(185);
@@ -187,7 +187,7 @@ public class Main extends Application {
         //sets the colour of the text to Green
         name.setFill(Color.GREEN);
         root.getChildren().add(name);
-        
+        //If the button is pressed it will open the instruction menu
         instructionsButton.setOnAction(e ->
                 instructionsMenu.show()
         );
@@ -202,10 +202,13 @@ public class Main extends Application {
 
 
     }
-
+    //Sets the size of 4 diffrent cases of pipes
     public void setSize(int i, int counter) {
         int rand = new Random().nextInt(3);
-
+        //Checks what the value of the random int is
+        //Whatever the value of the int is, there will be a specific pipe generated
+        //There are three differnet cases
+        //First if statement checks the case that int rand is 0
         if (rand == 0) {
             rectangleTop[i].setHeight(200);
             rectangleTop[i].setTranslateY(36);
@@ -214,6 +217,7 @@ public class Main extends Application {
             rectangleBot[i].setTranslateY(-222);
 
             coins[i].setTranslateY(70);
+        //this else if statement checks the case that int rand is 1
         } else if (rand == 1) {
             rectangleTop[i].setHeight(100);
             rectangleTop[i].setTranslateY(85);
@@ -222,6 +226,7 @@ public class Main extends Application {
             rectangleBot[i].setTranslateY(-178);
 
             coins[i].setTranslateY(00);
+        //this else statement checks the case that int rand is 2
         } else {
             rectangleTop[i].setHeight(150);
             rectangleTop[i].setTranslateY(61);
