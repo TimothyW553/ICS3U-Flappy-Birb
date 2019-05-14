@@ -193,6 +193,7 @@ public class Main extends Application {
         instructionsButton.setOnAction(e ->
                 instructionsMenu.show()
         );
+        //Gets the instruction Button
         root.getChildren().add(instructionsButton);
 
 
@@ -219,7 +220,7 @@ public class Main extends Application {
             rectangleBot[i].setTranslateY(-222);
 
             coins[i].setTranslateY(70);
-        //this else if statement checks the case that int rand is 1
+            //this else if statement checks the case that int rand is 1
         } else if (rand == 1) {
             rectangleTop[i].setHeight(100);
             rectangleTop[i].setTranslateY(85);
@@ -228,7 +229,7 @@ public class Main extends Application {
             rectangleBot[i].setTranslateY(-178);
 
             coins[i].setTranslateY(00);
-        //this else statement checks the case that int rand is 2
+            //this else statement checks the case that int rand is 2
         } else {
             rectangleTop[i].setHeight(150);
             rectangleTop[i].setTranslateY(61);
@@ -252,26 +253,33 @@ public class Main extends Application {
         score = 0;
         above = false;
         //High score value has to be get from the text and the value of High score has to be updated from 0 to the value in the text file
+        //Gets the value of the last high score that is in the text document so it can replace the high score with it
+        //https://stackoverflow.com/questions/13405822/using-bufferedreader-readline-in-a-while-loop-properly
         try (BufferedReader br = new BufferedReader(new FileReader("HighScore.txt"))) {
+            //Makes a string named sCurrentLine
             String sCurrentLine;
+            //changes Scurrentline into the line in the text docment
+            //Checks if it is empty or not
+            //If not empty the value of sCurrentLine is added to highScore
             while ((sCurrentLine = br.readLine()) != null) {
                 highScore = Integer.parseInt(sCurrentLine);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //
         currentScore.setText("Current score: " + score);
         maxScore.setText("High Score: " + highScore);
         restart.setText("");
         game.getChildren().add(restart);
-
+        //Code bellow checks if the restart button is pressed
+        //if it is clicked on, it will go to the runningGame method
         restart.setOnMouseClicked(e -> {
             game.getChildren().clear();
             move = true;
             runningGame();
         });
-
+        //Checks if W is pressed
+        //If W is pressed, the running game method runs
         game.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.W) {
                 if (move) {
