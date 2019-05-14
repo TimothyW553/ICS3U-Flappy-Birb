@@ -101,13 +101,13 @@ public class Main extends Application {
         instructionsText.setPrefRowCount(4); //The number of lines that the instruction page will need
 
         instructionsText.setFont(Font.font(java.awt.Font.SANS_SERIF, 17)); //The font and size of the instruction page
-        instructions.getChildren().add(instructionsText);
+        instructions.getChildren().add(instructionsText); //Shows the Instruction page text. 
         //The line bellow inserts the play button image for the start menu
         Image play = new Image("file:playbutton.png", 200, 200, true, true);
         ImageView playView = new ImageView(play);
-        playButton = new Button("", playView);
-        playButton.setBackground(Background.EMPTY);
-        playButton.setTranslateY(70);
+        playButton = new Button("", playView); //adds a button that over the playbutton image
+        playButton.setBackground(Background.EMPTY); //Sets the background of the button to transparent so you can see the image
+        playButton.setTranslateY(70); //Sets the location of the button 
         playButton.setOnAction(e -> {
             window.setScene(gameScene);
             runningGame();
