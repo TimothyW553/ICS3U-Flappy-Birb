@@ -87,10 +87,9 @@ public class Main extends Application {
 
         titleScene = new Scene(root, 750, 450);
         gameScene = new Scene(game, 750, 450);
-        instructionsScene = new Scene(instructions, 300, 100);
+        instructionsScene = new Scene(instructions, 700, 400);
 
         instructionsMenu = new Stage();
-        instructionsMenu.setX(1100);
         instructionsMenu.setScene(instructionsScene);
 
         //Makes the text for the Current Score
@@ -116,16 +115,14 @@ public class Main extends Application {
         maxScore.setFill(Color.GREEN);
 
         TextArea instructionsText = new TextArea();
-        instructionsText.setEditable(false);
-        //The code below is the text for the instruction page
-        instructionsText.setText("Use the W button to" + "\nget started. Fly the bird" + "\nas far as you can" + "\nwithout hitting a pipe.");
-        //The number of lines that the instruction page will need
-        instructionsText.setPrefRowCount(4);
+        Image instructionText = new Image("file:instructions.png", 750, 450, true, true);
+        BackgroundImage instructionBackground = new BackgroundImage(instructionText,
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
+                BackgroundSize.DEFAULT);
 
         //The font and size of the instruction page
-        instructionsText.setFont(Font.font(java.awt.Font.SANS_SERIF, 17));
         //Shows the Instruction page text.
-        instructions.getChildren().add(instructionsText);
+        instructions.setBackground(new Background(instructionBackground));
         //The line bellow inserts the play button image for the start menu
         //http://animalia-life.club/other/flappy-bird-play-button.html
         Image play = new Image("file:playbutton.png", 200, 200, true, true);
@@ -193,7 +190,6 @@ public class Main extends Application {
         instructionsButton.setOnAction(e ->
                 instructionsMenu.show()
         );
-        //Gets the instruction Button
         root.getChildren().add(instructionsButton);
 
 
@@ -253,33 +249,26 @@ public class Main extends Application {
         score = 0;
         above = false;
         //High score value has to be get from the text and the value of High score has to be updated from 0 to the value in the text file
-        //Gets the value of the last high score that is in the text document so it can replace the high score with it
-        //https://stackoverflow.com/questions/13405822/using-bufferedreader-readline-in-a-while-loop-properly
         try (BufferedReader br = new BufferedReader(new FileReader("HighScore.txt"))) {
-            //Makes a string named sCurrentLine
             String sCurrentLine;
-            //changes Scurrentline into the line in the text docment
-            //Checks if it is empty or not
-            //If not empty the value of sCurrentLine is added to highScore
             while ((sCurrentLine = br.readLine()) != null) {
                 highScore = Integer.parseInt(sCurrentLine);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //
         currentScore.setText("Current score: " + score);
         maxScore.setText("High Score: " + highScore);
         restart.setText("");
         game.getChildren().add(restart);
-        //Code bellow checks if the restart button is pressed
-        //if it is clicked on, it will go to the runningGame method
+
         restart.setOnMouseClicked(e -> {
             game.getChildren().clear();
             move = true;
             runningGame();
         });
-        //Checks if W is pressed
-        //If W is pressed, the running game method runs
+
         game.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.W) {
                 if (move) {
