@@ -381,9 +381,9 @@ public class Main extends Application {
     }
 
     public void pipes() {
-        if(coinCollected(hitbox)) {
-                System.out.println("Coin Collected!");
-                PointSound();
+        if (coinCollected(hitbox)) {
+            System.out.println("Coin Collected!");
+            PointSound();
         }
         if (move) {
             for (int i = 0; i < pipeCount; i++) {
