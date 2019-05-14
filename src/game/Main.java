@@ -23,14 +23,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 import javax.swing.text.Highlighter;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Random;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.*;
 
 public class Main extends Application {
 
@@ -41,7 +36,6 @@ public class Main extends Application {
     public static StackPane instructions;
     public static Scene titleScene;
     public static Scene gameScene;
-    public static Scene leaderboardScene;
     public static Scene instructionsScene;
     public static ImageView birdView;
     public static Button playButton;
@@ -160,7 +154,7 @@ public class Main extends Application {
         root.getChildren().add(instructionsButton);
 
 
-        Music();
+        BackgroundMusic();
 
         window.setTitle("Flappy Pappy");
         window.setScene(titleScene);
@@ -415,6 +409,7 @@ public class Main extends Application {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                            out.println(highScore);
                             out.close();
                         }
                     }
@@ -426,8 +421,7 @@ public class Main extends Application {
         }
     }
 
-
-    public void Music() {
+    public void BackgroundMusic() {
         String filePath = Main.class.getResource("/Sounds/In the Hall of the Mountain King.mp3").toString();
         Media song = new Media(filePath);
         player = new MediaPlayer(song);
