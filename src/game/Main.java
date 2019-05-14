@@ -23,6 +23,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
 import javax.swing.text.Highlighter;
 import java.io.*;
 import java.util.ArrayList;
@@ -57,15 +58,17 @@ public class Main extends Application {
     public static int globalHighScore = 0;
     public static double gravity = 0;
     public ArrayList<Rectangle> rectangleArrayList;
-    public ArrayList<Rectangle> coinsArrayList;
+    public ArrayList<Circle> coinsArrayList;
     public static Text currentScore; //Text for Current Score
     public static Text maxScore; //Text for High Score
     public static Text text;
     public static Rectangle[] rectangleTop = new Rectangle[pipeCount];
     public static Rectangle[] rectangleBot = new Rectangle[pipeCount];
-    public static Rectangle[] coins = new Rectangle[pipeCount];
+    public static Circle[] coins = new Circle[pipeCount];
     public static AnimationTimer animation;
     public static MediaPlayer player;
+    public static MediaPlayer point;
+    public static MediaPlayer hit;
     public static ImageView gameOver;
     public static Ellipse hitbox;
 
@@ -176,15 +179,15 @@ public class Main extends Application {
             rectangleBot[i].setHeight(100);
             rectangleBot[i].setTranslateY(-222);
 
-            coins[i].setTranslateY(-110);
+            coins[i].setTranslateY(70);
         } else if (rand == 1) {
             rectangleTop[i].setHeight(100);
             rectangleTop[i].setTranslateY(85);
 
-            rectangleBot[i].setHeight(200);
+            rectangleBot[i].setHeight(250);
             rectangleBot[i].setTranslateY(-178);
 
-            coins[i].setTranslateY(-20);
+            coins[i].setTranslateY(00);
         } else {
             rectangleTop[i].setHeight(150);
             rectangleTop[i].setTranslateY(61);
@@ -192,7 +195,7 @@ public class Main extends Application {
             rectangleBot[i].setTranslateY(-192);
             rectangleBot[i].setHeight(150);
 
-            coins[i].setTranslateY(-60);
+            coins[i].setTranslateY(-150);
         }
 
         rectangleArrayList.add(rectangleTop[i]);
@@ -206,7 +209,7 @@ public class Main extends Application {
         above = false;
         //High score value has to be get from the text and the value of High score has to be updated from 0 to the value in the text file
         try (BufferedReader br = new BufferedReader(new FileReader("HighScore.txt"))) {
-            String  sCurrentLine;
+            String sCurrentLine;
             while ((sCurrentLine = br.readLine()) != null) {
                 highScore = Integer.parseInt(sCurrentLine);
             }
@@ -223,7 +226,6 @@ public class Main extends Application {
             game.getChildren().clear();
             move = true;
             runningGame();
-
         });
 
         game.setOnKeyPressed(e -> {
@@ -270,12 +272,11 @@ public class Main extends Application {
         for (int i = 0; i < pipeCount; i++) {
             rectangleTop[i] = new Rectangle();
             rectangleBot[i] = new Rectangle();
-            coins[i] = new Rectangle();
+            coins[i] = new Circle();
             rectangleTop[i].setFill(Color.rgb(53, 200, 0));
             rectangleBot[i].setFill(Color.rgb(53, 200, 0));
             coins[i].setFill(Color.YELLOW);
-            coins[i].setWidth(15);
-            coins[i].setHeight(15);
+            coins[i].setRadius(12);
             rectangleTop[i].setWidth(75);
             rectangleBot[i].setWidth(75);
             rectangleTop[i].setTranslateX(600 + counter);
@@ -306,6 +307,7 @@ public class Main extends Application {
         }
         text.setText("");
     }
+
     //The code for the start of the game goes here
     public void runGame() {
         animation = new AnimationTimer() {
@@ -315,6 +317,8 @@ public class Main extends Application {
                     animation.stop();
                     restart.setText("RESTART");
                     move = false;
+                    HitSound();
+                    player.stop();
                 }
 
                 pipes();
@@ -370,30 +374,38 @@ public class Main extends Application {
         };
 
     }
+
     public void update() {
         birdView.setY(birdView.getY() + gravity);
         hitbox.setCenterY(hitbox.getCenterY() + gravity);
     }
 
     public void pipes() {
+        if(coinCollected(hitbox)) {
+                System.out.println("Coin Collected!");
+                PointSound();
+        }
         if (move) {
             for (int i = 0; i < pipeCount; i++) {
                 rectangleTop[i].setX(rectangleTop[i].getX() - 2.2);
                 rectangleBot[i].setX(rectangleBot[i].getX() - 2.2);
-                coins[i].setX(coins[i].getX() - 2.2);
+                coins[i].setCenterX(coins[i].getCenterX() - 3.5);
                 if (position[i] + rectangleTop[i].getX() > -25 &&
                         position[i] + rectangleTop[i].getX() < 25 && !scoreCheck[i]) {
                     if (birdView.getY() < -200) {
                         above = true;
                     }
-                    else {
-                        score += 2;
-                        coins[i].setFill(Color.TRANSPARENT);
+                    if (coinCollected(hitbox)) {
+                        score++;
+                        PointSound();
+
+                    } else {
+                        score++;
+                        PointSound();
                         currentScore.setText("Current score: " + score);
                         //The line bellow compares if the current High Score is lower than the current score so it can update the high score
-                        if (highScore<score) {
+                        if (highScore < score) {
                             highScore = score;
-                            System.out.println(highScore);
                             PrintWriter out = null;
                             //The code here will add the new Value of the high score to the text file
 
@@ -403,7 +415,6 @@ public class Main extends Application {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            out.println(highScore);
                             out.close();
                         }
                     }
@@ -425,6 +436,24 @@ public class Main extends Application {
         player.setVolume(0.2);
     }
 
+    public void HitSound() {
+        String filePath = Main.class.getResource("/Sounds/sfx_hit.wav").toString();
+        Media song = new Media(filePath);
+        hit = new MediaPlayer(song);
+        hit.setCycleCount(1);
+        hit.play();
+        hit.setVolume(0.2);
+    }
+
+    public void PointSound() {
+        String filePath = Main.class.getResource("/Sounds/sfx_point.wav").toString();
+        Media song = new Media(filePath);
+        point = new MediaPlayer(song);
+        point.setCycleCount(1);
+        point.play();
+        point.setVolume(0.2);
+    }
+
 
     public boolean check() {
         boolean flag = true;
@@ -433,14 +462,6 @@ public class Main extends Application {
         }
         if (checkBounds(hitbox)) {
             flag = false;
-        }
-        return flag;
-    }
-
-    public boolean checkCoin() {
-        boolean flag = false;
-        if(coinCollected(hitbox)) {
-            flag = true;
         }
         return flag;
     }
@@ -458,9 +479,11 @@ public class Main extends Application {
 
     public boolean coinCollected(Ellipse hitbox) {
         boolean collected = false;
-        for (Rectangle coin : coinsArrayList) {
-            if(hitbox.getBoundsInParent().intersects(coin.getBoundsInParent())) {
+        for (Circle coins : coinsArrayList) {
+//            System.out.println(hitbox.getBoundsInParent());
+            if (hitbox.getBoundsInParent().intersects(coins.getBoundsInParent())) {
                 collected = true;
+                coins.setCenterX(100000);
             }
         }
         return collected;
