@@ -425,6 +425,12 @@ public class Main extends Application {
     public void pipes() {
         if (coinCollected(hitbox)) {
             System.out.println("Coin Collected!");
+            score++;
+            currentScore.setText("Current score: " + score);
+            if (highScore<score){
+                highScore = score;
+                maxScore.setText("High Score: " + highScore);
+            }
             PointSound();
         }
         if (move) {
