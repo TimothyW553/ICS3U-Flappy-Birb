@@ -250,25 +250,29 @@ public class Main extends Application {
         above = false;
         //High score value has to be get from the text and the value of High score has to be updated from 0 to the value in the text file
         try (BufferedReader br = new BufferedReader(new FileReader("HighScore.txt"))) {
+            //A string is made named sCurrentLine
             String sCurrentLine;
+            //The value of sCurrentLine changes to the value of the text file
+            //while it is not empty, the value of high score is updared to the number in the text file
             while ((sCurrentLine = br.readLine()) != null) {
                 highScore = Integer.parseInt(sCurrentLine);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //
         currentScore.setText("Current score: " + score);
         maxScore.setText("High Score: " + highScore);
         restart.setText("");
         game.getChildren().add(restart);
-
+        //Checks if the reset Button is clicked
+        //if it is clicked, runningGame method is run
         restart.setOnMouseClicked(e -> {
             game.getChildren().clear();
             move = true;
             runningGame();
         });
-
+        //Checks if W is pressed
+        //If W is pressed the jump method runs
         game.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.W) {
                 if (move) {
@@ -298,7 +302,7 @@ public class Main extends Application {
         coinsArrayList = new ArrayList<>();
         position = new int[pipeCount];
         scoreCheck = new boolean[pipeCount];
-
+        //Sets the text for the start instructions
         text = new Text("Press W to start");
         text.setTranslateY(-50);
         text.setFont(Font.font(java.awt.Font.SANS_SERIF, 50));
@@ -311,6 +315,7 @@ public class Main extends Application {
         game.getChildren().add(maxScore);
 
         int counter = 0;
+        //Gets a rextangle for the pipes
         for (int i = 0; i < pipeCount; i++) {
             rectangleTop[i] = new Rectangle();
             rectangleBot[i] = new Rectangle();
@@ -329,6 +334,7 @@ public class Main extends Application {
             counter += 250;
             setSize(i, counter);
         }
+        //Gets the pipes and coines
         for (int i = 0; i < pipeCount; i++) {
             game.getChildren().add(rectangleTop[i]);
             game.getChildren().add(rectangleBot[i]);
@@ -336,7 +342,7 @@ public class Main extends Application {
         }
         runGame();
     }
-
+    //The method is for the Jump function
     public void jump() {
         animation.start();
         gravity = -5.1;
@@ -352,10 +358,12 @@ public class Main extends Application {
 
     //The code for the start of the game goes here
     public void runGame() {
+        //The bloc below is the animation timer
         animation = new AnimationTimer() {
             public void handle(long currentNanoTime) {
                 if (!check() || above) {
                     game.getChildren().add(gameOver);
+                    //stops animation if bird hits pipe
                     animation.stop();
                     restart.setText("RESTART");
                     move = false;
@@ -416,13 +424,15 @@ public class Main extends Application {
         };
 
     }
-
+    //Updates the location of the bird
     public void update() {
         birdView.setY(birdView.getY() + gravity);
         hitbox.setCenterY(hitbox.getCenterY() + gravity);
     }
-
+    //Checkes if the coin is collected
+    //Checks if bird has gone the the pipes
     public void pipes() {
+        //checks if the bird has collected the coin, if so a point is added
         if (coinCollected(hitbox)) {
             score++;
             currentScore.setText("Current score: " + score);
@@ -430,8 +440,10 @@ public class Main extends Application {
                 highScore = score;
                 maxScore.setText("High Score: " + highScore);
             }
+            //The point sound is added
             PointSound();
         }
+        //
         if (move) {
             for (int i = 0; i < pipeCount; i++) {
                 rectangleTop[i].setX(rectangleTop[i].getX() - 2.2);
@@ -455,8 +467,7 @@ public class Main extends Application {
                             highScore = score;
                             PrintWriter out = null;
                             //The code here will add the new Value of the high score to the text file
-
-
+                            //Outputs the value of Highscore into a text file
                             try {
                                 out = new PrintWriter(new FileWriter("HighScore.txt"));
                             } catch (IOException e) {
