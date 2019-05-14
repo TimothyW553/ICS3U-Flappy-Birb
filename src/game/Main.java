@@ -242,7 +242,10 @@ public class Main extends Application {
         coinsArrayList.add(coins[i]);
 
     }
-
+    /* The Method Bellow
+     * The method will run if the play button is clicked
+     * The code is the code for the play status of the game
+     */
     public void runningGame() {
         score = 0;
         above = false;
