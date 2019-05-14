@@ -1,5 +1,8 @@
-//Timmy and Ali
-//Flappy Pappy 
+/* Group Members: Timothy Wang and Alireza Azimi Tabrizi 
+ * Game Name: Flappy Pappy
+ * Work Cited Links:
+ *
+ */
 package game;
 
 import javafx.animation.AnimationTimer;
