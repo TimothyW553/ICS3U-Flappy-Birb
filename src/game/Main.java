@@ -101,8 +101,8 @@ public class Main extends Application {
         currentScore.setTranslateX(-185);
         //Sets the font and the size
         currentScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
-        //sets the colour of the text to white
-        currentScore.setFill(Color.GHOSTWHITE);
+        //sets the colour of the text to Green
+        currentScore.setFill(Color.GREEN);
 
         //Makes the text for High Score
         maxScore = new Text("High Score" + score);
@@ -112,8 +112,8 @@ public class Main extends Application {
         maxScore.setTranslateX(70);
         //Sets the font and the size
         maxScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
-        //sets the colour of the text to white
-        maxScore.setFill(Color.GHOSTWHITE);
+        //sets the colour of the text to Green
+        maxScore.setFill(Color.GREEN);
 
         TextArea instructionsText = new TextArea();
         instructionsText.setEditable(false);
@@ -127,6 +127,7 @@ public class Main extends Application {
         //Shows the Instruction page text.
         instructions.getChildren().add(instructionsText);
         //The line bellow inserts the play button image for the start menu
+        //http://animalia-life.club/other/flappy-bird-play-button.html
         Image play = new Image("file:playbutton.png", 200, 200, true, true);
         ImageView playView = new ImageView(play);
         //adds a button that over the playbutton image
@@ -155,6 +156,7 @@ public class Main extends Application {
         gameOver.setFitWidth(400);
         gameOver.setPreserveRatio(true);
         //The line bellow inserts the image that will be the background of the game.
+        //https://ar.pngtree.com/freebackground/blue-cartoon-pictures_375809.html
         Image background = new Image("file:flappybackground.jpg");
         BackgroundImage imageOfBackground = new BackgroundImage(background,
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
@@ -167,7 +169,7 @@ public class Main extends Application {
         restart.setTranslateY(185);
         restart.setBackground(Background.EMPTY);
         restart.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
-        restart.setTextFill(Color.GHOSTWHITE);
+        restart.setTextFill(Color.GREEN);
 
         instructionsButton = new Button("HOW TO PLAY");
         instructionsButton.setTranslateX(250);
@@ -282,6 +284,7 @@ public class Main extends Application {
             }
         });
         //The line bellow iserts the image of the bird.
+        //https://i-cdn.phonearena.com/images/article/52185-image/Catch-the-pigeon-Here-are-the-best-and-worst-Flappy-Bird-clones.jpg
         Image bird = new Image("file:bird.png");
         birdView = new ImageView();
         birdView.setImage(bird);
@@ -302,7 +305,7 @@ public class Main extends Application {
         text = new Text("Press W to start");
         text.setTranslateY(-50);
         text.setFont(Font.font(java.awt.Font.SANS_SERIF, 50));
-        text.setFill(Color.GHOSTWHITE);
+        text.setFill(Color.BLUE);
 
         game.getChildren().add(text);
         game.getChildren().add(birdView);
@@ -424,7 +427,6 @@ public class Main extends Application {
 
     public void pipes() {
         if (coinCollected(hitbox)) {
-            System.out.println("Coin Collected!");
             score++;
             currentScore.setText("Current score: " + score);
             if (highScore<score){
