@@ -44,12 +44,11 @@ public class Main extends Application {
     public static Button instructionsButton;
     public boolean above = false;
     public boolean move = true;
-    public boolean[] scoreCheck;
-    public static int score = 0;
+    public boolean[] scoreCheck; //Makes a boolean to check the score
+    public static int score = 0; //int that the value of the score is added to
     public static int pipeCount = 999;
     public static int[] position;
-    public static int highScore = 0;//int for High Score
-    public static int globalHighScore = 0;
+    public static int highScore = 0;//int for the value of High Score
     public static double gravity = 0;
     public ArrayList<Rectangle> rectangleArrayList;
     public ArrayList<Circle> coinsArrayList;
@@ -83,25 +82,25 @@ public class Main extends Application {
         instructionsMenu.setX(1100);
         instructionsMenu.setScene(instructionsScene);
 
-        currentScore = new Text("Current score " + score);
-        currentScore.setTranslateY(185);
-        currentScore.setTranslateX(-185);
-        currentScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
-        currentScore.setFill(Color.GHOSTWHITE);
+        currentScore = new Text("Current score " + score); //Makes the text for the Current Score
+        currentScore.setTranslateY(185); //Sets the Y value of the current score
+        currentScore.setTranslateX(-185);//Sers the X value of the current score
+        currentScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33)); //Sets the font and the size
+        currentScore.setFill(Color.GHOSTWHITE); //sets the colour of the text to white
 
-        maxScore = new Text("High Score" + score);
-        maxScore.setTranslateY(185);
-        maxScore.setTranslateX(70);
-        maxScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
-        maxScore.setFill(Color.GHOSTWHITE);
+        maxScore = new Text("High Score" + score); //Makes the text for High Score
+        maxScore.setTranslateY(185); //Sets the Y value of High score
+        maxScore.setTranslateX(70); //Sets the X value of the high score
+        maxScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33)); //Sets the font and the size
+        maxScore.setFill(Color.GHOSTWHITE); //sets the colour of the text to white
 
         TextArea instructionsText = new TextArea();
         instructionsText.setEditable(false);
         //The code below is the text for the instruction page
         instructionsText.setText("Use the W button to" + "\nget started. Fly the bird" + "\nas far as you can" + "\nwithout hitting a pipe.");
-        instructionsText.setPrefRowCount(4);
+        instructionsText.setPrefRowCount(4); //The number of lines that the instruction page will need
 
-        instructionsText.setFont(Font.font(java.awt.Font.SANS_SERIF, 17));
+        instructionsText.setFont(Font.font(java.awt.Font.SANS_SERIF, 17)); //The font and size of the instruction page
         instructions.getChildren().add(instructionsText);
         //The line bellow inserts the play button image for the start menu
         Image play = new Image("file:playbutton.png", 200, 200, true, true);
