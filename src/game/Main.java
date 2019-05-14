@@ -1,3 +1,5 @@
+//Timmy and Ali
+//Flappy Pappy 
 package game;
 
 import javafx.animation.AnimationTimer;
@@ -182,7 +184,7 @@ public class Main extends Application {
         //sets the colour of the text to Green
         name.setFill(Color.GREEN);
         root.getChildren().add(name);
-
+        
         instructionsButton.setOnAction(e ->
                 instructionsMenu.show()
         );
