@@ -36,7 +36,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javax.swing.text.Highlighter;
 import java.io.*;
 import java.util.*;
 
