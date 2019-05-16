@@ -1,7 +1,9 @@
 /* Group Members: Timothy Wang and Alireza Azimi Tabrizi
  * Game Name: Flappy Pappy
  * Work Cited Links:
- * 
+ *Music:
+ * https://www.sounds-resource.com/mobile/flappybird/sound/5309/
+ * https://www.youtube.com/watch?v=cD8EPdn5Ctg
  */
 package game;
 
@@ -111,7 +113,7 @@ public class Main extends Application {
         //Sets the font and the size
         maxScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
         //sets the colour of the text to Green
-        maxScore.setFill(Color.GREEN);  
+        maxScore.setFill(Color.GREEN);
 
         TextArea instructionsText = new TextArea();
         Image instructionText = new Image("file:instructions.png", 750, 450, true, true);
@@ -190,8 +192,9 @@ public class Main extends Application {
                 instructionsMenu.show()
         );
         root.getChildren().add(instructionsButton);
-        
+
         // plays background music at @ "/Sounds/In the Hall of the Mountain King.mp3"
+        //https://www.youtube.com/watch?v=cD8EPdn5Ctg
         BackgroundMusic();
 
         // sets application title to "Flappy Pappy"
@@ -369,6 +372,7 @@ public class Main extends Application {
                     animation.stop();
                     restart.setText("RESTART");
                     move = false;
+                    //https://www.sounds-resource.com/mobile/flappybird/sound/5309/
                     HitSound();
                     player.stop();
                 }
