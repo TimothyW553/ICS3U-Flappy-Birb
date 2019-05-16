@@ -1,16 +1,9 @@
 /* Group Members: Timothy Wang and Alireza Azimi Tabrizi
  * Game Name: Flappy Pappy
  * Work Cited Links:
- *  > Music:
- *    > Sound Effects: https://www.sounds-resource.com/mobile/flappybird/sound/5309/
- *    > Background Music: https://www.youtube.com/watch?v=cD8EPdn5Ctg
- *  > Game Images:
- *    > Play button: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAQlBMVEX////w8PAAAAAAwmGlpaX29vacnJz7+/v78/kAvlH28vShoaEAwFmc2rKl4rvV1dWU2KwAvEmd37WUlJRlzo3/9v/joPAjAAACNklEQVR4nO3c7W6CQBRFUa3yLbXa9v1ftQp1EjsWAxycE93rvwObIldjM6sVAAAAAAAAAAAAAAAAAAAAAAAA8KL2zdZJs5cXNm9eGnnhNnXSH1sKKbzI5SuKhCueqxayLZx7Yi9UqH86z9MoCvNlJ+w8V59Apr4XHW/OWHeXTXwthR4oHEKhBwqHOA76WDOt8DJP7QZ9bOKpTrwwyYy/3ebc3CmMf2RQ6IbCGIVuKIxJC4/vvaNqwVjiwsOud1AtGEtcWG16lWrBGIUxCke5FG6qqjos87hxKTzZvatWvUJhjMJRrgq/Fhn9RoWbZUa/U+EyY4PCGIWjRIX60W9XKB8bFMYoHOV2oXT0OxZqR79lYfdMVR2CwtiLFBZriXKgsNQcoqCQwnn+KeymxTMX7r7atv2oNYfwLGzLuhYFuhaq8tYUpig8fwNWvQfP7Aqr77IshYGGhaIhEVD40ELloA+cCqWDPrAqVA76wKtQnrem8IGF6kEfuBTKB31gU6geEgGFSxeG//p61sL6o+0t8pDpJC5c1xei9WKpC5dHIYX+KKTQH4UU+qPwhm5bmlVRFFnqk78rO51l9zv+hM0xzi/7dE/MPrs/xjTdhbEvzCmkkMLUKKTwNEaLnltp9nteqzmFZ2E3M7PR3w/68R/WBgrNbtdMtt3h8xeGre3yInNShMK5ewSFre2a3Esj3wzwafcvpTAZfWF+/6APNXfrWQAAAAAAAAAAAAAAAAAAAAAAAAAA8K8f7o5QPp/pb7cAAAAASUVORK5CYII=
- *    > Font: https://www.dafont.com/flappybirdy.font
- *    >
- *  > Code Samples:
- *    > Collision Detection: https://stackoverflow.com/questions/15013913/checking-collision-of-shapes-with-javafx
- *    > EventHandler (lambda): https://stackoverflow.com/questions/45306039/how-to-write-lambda-expression-with-eventhandler-javafx
+ *Music:
+ * https://www.sounds-resource.com/mobile/flappybird/sound/5309/
+ * https://www.youtube.com/watch?v=cD8EPdn5Ctg
  */
 package game;
 
@@ -469,6 +462,7 @@ public class Main extends Application {
                     }
                     if (coinCollected(hitbox)) {
                         score++;
+                        //If the point is collected, the Point sound is created 
                         PointSound();
 
                     } else {
@@ -506,8 +500,8 @@ public class Main extends Application {
         player.play();
         player.setVolume(0.2);
     }
-
-    public void HitSound() {
+    //The method bellow gets the soundfx for the bird dying
+    public void HitSound() { 
         String filePath = Main.class.getResource("/Sounds/sfx_hit.wav").toString();
         Media song = new Media(filePath);
         hit = new MediaPlayer(song);
@@ -515,7 +509,7 @@ public class Main extends Application {
         hit.play();
         hit.setVolume(0.2);
     }
-
+    //The method bellow gets the soundfx for the collection of a point
     public void PointSound() {
         String filePath = Main.class.getResource("/Sounds/sfx_point.wav").toString();
         Media song = new Media(filePath);
@@ -526,10 +520,6 @@ public class Main extends Application {
     }
 
 
-   /*
-     * Checks if the bird is above y = 110 (floor)
-     * and checks if it hitbox is intersecting with pipes or not
-     */
     public boolean check() {
         boolean flag = true;
         if (hitbox.getCenterY() >= 110) {
@@ -541,11 +531,7 @@ public class Main extends Application {
         return flag;
     }
 
-    /*
-     * Collision detection for hitbox (of bird) and pipes
-     * This method goes through all the pipes and checks if the current pipe
-     * is intersecting with the bird
-     */
+
     public boolean checkBounds(Ellipse hitbox) {
         boolean collision = false;
         for (Rectangle rect : rectangleArrayList) {
@@ -556,12 +542,6 @@ public class Main extends Application {
         return collision;
     }
 
-    /*
-     * Checks for the intersection of coins with the hitbox (of bird)
-     * If the bird DOES intersect with the coin, it sets collected to true
-     * and sets the position of the coin to x = 100000. We did this so that it 
-     * no longer intersects with the bird.
-     */
     public boolean coinCollected(Ellipse hitbox) {
         boolean collected = false;
         for (Circle coins : coinsArrayList) {
@@ -578,4 +558,3 @@ public class Main extends Application {
         launch(args);
     }
 }
-
