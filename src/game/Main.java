@@ -7,7 +7,8 @@
  *  > Game Images:
  *    > Play button: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAQlBMVEX////w8PAAAAAAwmGlpaX29vacnJz7+/v78/kAvlH28vShoaEAwFmc2rKl4rvV1dWU2KwAvEmd37WUlJRlzo3/9v/joPAjAAACNklEQVR4nO3c7W6CQBRFUa3yLbXa9v1ftQp1EjsWAxycE93rvwObIldjM6sVAAAAAAAAAAAAAAAAAAAAAAAA8KL2zdZJs5cXNm9eGnnhNnXSH1sKKbzI5SuKhCueqxayLZx7Yi9UqH86z9MoCvNlJ+w8V59Apr4XHW/OWHeXTXwthR4oHEKhBwqHOA76WDOt8DJP7QZ9bOKpTrwwyYy/3ebc3CmMf2RQ6IbCGIVuKIxJC4/vvaNqwVjiwsOud1AtGEtcWG16lWrBGIUxCke5FG6qqjos87hxKTzZvatWvUJhjMJRrgq/Fhn9RoWbZUa/U+EyY4PCGIWjRIX60W9XKB8bFMYoHOV2oXT0OxZqR79lYfdMVR2CwtiLFBZriXKgsNQcoqCQwnn+KeymxTMX7r7atv2oNYfwLGzLuhYFuhaq8tYUpig8fwNWvQfP7Aqr77IshYGGhaIhEVD40ELloA+cCqWDPrAqVA76wKtQnrem8IGF6kEfuBTKB31gU6geEgGFSxeG//p61sL6o+0t8pDpJC5c1xei9WKpC5dHIYX+KKTQH4UU+qPwhm5bmlVRFFnqk78rO51l9zv+hM0xzi/7dE/MPrs/xjTdhbEvzCmkkMLUKKTwNEaLnltp9nteqzmFZ2E3M7PR3w/68R/WBgrNbtdMtt3h8xeGre3yInNShMK5ewSFre2a3Esj3wzwafcvpTAZfWF+/6APNXfrWQAAAAAAAAAAAAAAAAAAAAAAAAAA8K8f7o5QPp/pb7cAAAAASUVORK5CYII=
  *    > Font: https://www.dafont.com/flappybirdy.font
- *    >
+ *    > Background Image: https://archive-media-0.nyafuu.org/wg/image/1513/48/1513484769283.png
+ *    > Bird Image: https://i-cdn.phonearena.com/images/article/52185-image/Catch-the-pigeon-Here-are-the-best-and-worst-Flappy-Bird-clones.jpg
  *  > Code Samples:
  *    > Collision Detection: https://stackoverflow.com/questions/15013913/checking-collision-of-shapes-with-javafx
  *    > EventHandler (lambda): https://stackoverflow.com/questions/45306039/how-to-write-lambda-expression-with-eventhandler-javafx
@@ -344,7 +345,7 @@ public class Main extends Application {
             coins[i].setTranslateX(600 + counter);
 
             position[i] = 600 + counter;
-            counter += 250;
+            counter += 250; // units between pipes (250 pixels)
             setSize(i, counter);
         }
         //Gets the pipes and coines
@@ -384,14 +385,25 @@ public class Main extends Application {
                     HitSound();
                     player.stop();
                 }
-
+                // pipes move to the left
                 pipes();
+                // cap for gravity
                 if (gravity >= 12) {
                     gravity = 12;
                 } else {
+                    // gravity acceleration of 0.26 per frame
                     gravity += 0.26;
                 }
+                // calls on update method and updates the position of the bird
                 update();
+
+                /* As the gravity increases, the rotation changes
+                 * gravity = 0-2, no rotation
+                 * gravity = -5, -30 degree rotation
+                 * gravity = -3, -20 degree rotation
+                 * gravity = -1, -10 degree rotation
+                 * etc...
+                 */
                 if (gravity >= 0 && gravity < 2) {
                     birdView.setRotate(0);
                     hitbox.setRotate(0);
@@ -443,7 +455,7 @@ public class Main extends Application {
         birdView.setY(birdView.getY() + gravity);
         hitbox.setCenterY(hitbox.getCenterY() + gravity);
     }
-    /* 
+    /*
      * Checkes if the coin is collected
      * Checks if bird has gone the the pipes
      */
@@ -517,7 +529,7 @@ public class Main extends Application {
         player.setVolume(0.2);
     }
     //The method bellow gets the soundfx for the bird dying
-    public void HitSound() { 
+    public void HitSound() {
         String filePath = Main.class.getResource("/Sounds/sfx_hit.wav").toString();
         Media song = new Media(filePath);
         hit = new MediaPlayer(song);
