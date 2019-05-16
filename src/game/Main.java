@@ -1,7 +1,7 @@
 /* Group Members: Timothy Wang and Alireza Azimi Tabrizi
  * Game Name: Flappy Pappy
  * Work Cited Links:
- *
+ * 
  */
 package game;
 
@@ -76,7 +76,6 @@ public class Main extends Application {
     public static ImageView gameOver;
     public static Ellipse hitbox;
 
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         window = primaryStage;
@@ -112,7 +111,7 @@ public class Main extends Application {
         //Sets the font and the size
         maxScore.setFont(Font.font(java.awt.Font.SANS_SERIF, 33));
         //sets the colour of the text to Green
-        maxScore.setFill(Color.GREEN);
+        maxScore.setFill(Color.GREEN);  
 
         TextArea instructionsText = new TextArea();
         Image instructionText = new Image("file:instructions.png", 750, 450, true, true);
@@ -141,20 +140,20 @@ public class Main extends Application {
         //Displays the playButton
         root.getChildren().add(playButton);
         //The line bellow inserts the game title file for the intro menu
-        Image title = new Image("file:flappytitle.png", 1050, 375, true, true);
+        Image title = new Image("file:flappy_title.png", 1050, 375, true, true);
         ImageView titleView = new ImageView();
         titleView.setImage(title);
         titleView.setTranslateY(-50);
         root.getChildren().add(titleView);
         //The line bellow inserts the game over logo.
-        Image over = new Image("file:gameover.png");
+        Image over = new Image("file:game_over.png");
         gameOver = new ImageView(over);
         gameOver.setFitHeight(400);
         gameOver.setFitWidth(400);
         gameOver.setPreserveRatio(true);
         //The line bellow inserts the image that will be the background of the game.
         //https://ar.pngtree.com/freebackground/blue-cartoon-pictures_375809.html
-        Image background = new Image("file:flappybackground.jpg");
+        Image background = new Image("file:flappy_background.jpg");
         BackgroundImage imageOfBackground = new BackgroundImage(background,
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
                 BackgroundSize.DEFAULT);
@@ -191,10 +190,11 @@ public class Main extends Application {
                 instructionsMenu.show()
         );
         root.getChildren().add(instructionsButton);
-
-
+        
+        // plays background music at @ "/Sounds/In the Hall of the Mountain King.mp3"
         BackgroundMusic();
 
+        // sets application title to "Flappy Pappy"
         window.setTitle("Flappy Pappy");
         window.setScene(titleScene);
         window.show();
@@ -204,10 +204,12 @@ public class Main extends Application {
     //Sets the size of 4 diffrent cases of pipes
     public void setSize(int i, int counter) {
         int rand = new Random().nextInt(3);
-        //Checks what the value of the random int is
-        //Whatever the value of the int is, there will be a specific pipe generated
-        //There are three differnet cases
-        //First if statement checks the case that int rand is 0
+        /*
+         * Checks what the value of the random int is
+         * Whatever the value of the int is, there will be a specific pipe generated
+         * There are three differnet cases
+         * First if statement checks the case that int rand is 0
+         */
         if (rand == 0) {
             rectangleTop[i].setHeight(200);
             rectangleTop[i].setTranslateY(36);
