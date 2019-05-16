@@ -435,8 +435,10 @@ public class Main extends Application {
         birdView.setY(birdView.getY() + gravity);
         hitbox.setCenterY(hitbox.getCenterY() + gravity);
     }
-    //Checkes if the coin is collected
-    //Checks if bird has gone the the pipes
+    /* 
+     * Checkes if the coin is collected
+     * Checks if bird has gone the the pipes
+     */
     public void pipes() {
         //checks if the bird has collected the coin, if so a point is added
         if (coinCollected(hitbox)) {
@@ -449,22 +451,28 @@ public class Main extends Application {
             //The point sound is added
             PointSound();
         }
-        //
-        if (move) {
+
+        if (move) { // if game is still running, continue
             for (int i = 0; i < pipeCount; i++) {
-                rectangleTop[i].setX(rectangleTop[i].getX() - 2.2);
-                rectangleBot[i].setX(rectangleBot[i].getX() - 2.2);
+                rectangleTop[i].setX(rectangleTop[i].getX() - 2.2); // moves top pipe by 2.2 units to the left every iteration
+                rectangleBot[i].setX(rectangleBot[i].getX() - 2.2); // moves bottom pipe by 2.2 units to the left every iteration
                 coins[i].setCenterX(coins[i].getCenterX() - 3.5);
                 if (position[i] + rectangleTop[i].getX() > -25 &&
                         position[i] + rectangleTop[i].getX() < 25 && !scoreCheck[i]) {
+                    /*
+                     * Checks if bird above the pipes (screen)
+                     * and sets above to true
+                     */
                     if (birdView.getY() < -200) {
                         above = true;
                     }
+                    /*
+                     * If hitbox collides with coin, adds one(1) to
+                     * score and runs the point added point.
+                     */
                     if (coinCollected(hitbox)) {
                         score++;
-                        //If the point is collected, the Point sound is created 
                         PointSound();
-
                     } else {
                         score++;
                         PointSound();
@@ -519,7 +527,10 @@ public class Main extends Application {
         point.setVolume(0.2);
     }
 
-
+    /*
+     * Checks if the bird is above y = 110 (floor)
+     * and checks if it hitbox is intersecting with pipes or not
+     */
     public boolean check() {
         boolean flag = true;
         if (hitbox.getCenterY() >= 110) {
@@ -531,7 +542,11 @@ public class Main extends Application {
         return flag;
     }
 
-
+    /*
+     * Collision detection for hitbox (of bird) and pipes
+     * This method goes through all the pipes and checks if the current pipe
+     * is intersecting with the bird
+     */
     public boolean checkBounds(Ellipse hitbox) {
         boolean collision = false;
         for (Rectangle rect : rectangleArrayList) {
@@ -542,10 +557,15 @@ public class Main extends Application {
         return collision;
     }
 
+    /*
+     * Checks for the intersection of coins with the hitbox (of bird)
+     * If the bird DOES intersect with the coin, it sets collected to true
+     * and sets the position of the coin to x = 100000. We did this so that it
+     * no longer intersects with the bird.
+     */
     public boolean coinCollected(Ellipse hitbox) {
         boolean collected = false;
         for (Circle coins : coinsArrayList) {
-//            System.out.println(hitbox.getBoundsInParent());
             if (hitbox.getBoundsInParent().intersects(coins.getBoundsInParent())) {
                 collected = true;
                 coins.setCenterX(100000);
