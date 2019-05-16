@@ -526,6 +526,10 @@ public class Main extends Application {
     }
 
 
+   /*
+     * Checks if the bird is above y = 110 (floor)
+     * and checks if it hitbox is intersecting with pipes or not
+     */
     public boolean check() {
         boolean flag = true;
         if (hitbox.getCenterY() >= 110) {
@@ -537,7 +541,11 @@ public class Main extends Application {
         return flag;
     }
 
-
+    /*
+     * Collision detection for hitbox (of bird) and pipes
+     * This method goes through all the pipes and checks if the current pipe
+     * is intersecting with the bird
+     */
     public boolean checkBounds(Ellipse hitbox) {
         boolean collision = false;
         for (Rectangle rect : rectangleArrayList) {
@@ -548,6 +556,12 @@ public class Main extends Application {
         return collision;
     }
 
+    /*
+     * Checks for the intersection of coins with the hitbox (of bird)
+     * If the bird DOES intersect with the coin, it sets collected to true
+     * and sets the position of the coin to x = 100000. We did this so that it 
+     * no longer intersects with the bird.
+     */
     public boolean coinCollected(Ellipse hitbox) {
         boolean collected = false;
         for (Circle coins : coinsArrayList) {
@@ -564,3 +578,4 @@ public class Main extends Application {
         launch(args);
     }
 }
+
