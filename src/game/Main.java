@@ -348,11 +348,11 @@ public class Main extends Application {
             coins[i].setRadius(12);
             rectangleTop[i].setWidth(75);
             rectangleBot[i].setWidth(75);
-            rectangleTop[i].setTranslateX(600 + counter);
-            rectangleBot[i].setTranslateX(600 + counter);
-            coins[i].setTranslateX(600 + counter);
+            rectangleTop[i].setTranslateX(650 + counter);
+            rectangleBot[i].setTranslateX(650 + counter);
+            coins[i].setTranslateX(650 + counter);
 
-            position[i] = 600 + counter;
+            position[i] = 650 + counter;
             counter += 250; // units between pipes (250 pixels)
             setSize(i, counter);
         }
