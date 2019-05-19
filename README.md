@@ -11,7 +11,7 @@ This application allows users to play the single player game called *Flappy Bird
 Flappy Bird wiki: <https://en.wikipedia.org/wiki/Flappy_Bird>
 _____________________________________________________
 
-To play this game simple:
+To play this game simply:
  1. Clone or download the project to your local machine
  2. Import the project into *IntelliJ*
  3. Run `Main.java`
