@@ -63,7 +63,7 @@ public class Main extends Application {
     public boolean[] scoreCheck;
     //int that the value of the score is added to
     public static int score = 0;
-    public static int pipeCount = 999;
+    public static int PIPE_COUNT = 999;
     public static int[] position;
     //int for the value of High Score
     public static int highScore = 0;
@@ -76,9 +76,9 @@ public class Main extends Application {
     public static Text maxScore;
     public static Text text;
     public static Text name;
-    public static Rectangle[] rectangleTop = new Rectangle[pipeCount];
-    public static Rectangle[] rectangleBot = new Rectangle[pipeCount];
-    public static Circle[] coins = new Circle[pipeCount];
+    public static Rectangle[] rectangleTop = new Rectangle[PIPE_COUNT];
+    public static Rectangle[] rectangleBot = new Rectangle[PIPE_COUNT];
+    public static Circle[] coins = new Circle[PIPE_COUNT];
     public static AnimationTimer animation;
     public static MediaPlayer player;
     public static MediaPlayer point;
@@ -239,7 +239,7 @@ public class Main extends Application {
 
             coins[i].setTranslateY(00);
             //this else statement checks the case that int rand is 2
-        } else {
+        } else if (rand == 2) {
             rectangleTop[i].setHeight(150);
             rectangleTop[i].setTranslateY(61);
 
@@ -247,6 +247,14 @@ public class Main extends Application {
             rectangleBot[i].setHeight(150);
 
             coins[i].setTranslateY(-150);
+        } else {
+            rectangleTop[i].setHeight(120);
+            rectangleTop[i].setTranslateY(50);
+
+            rectangleBot[i].setHeight(120);
+            rectangleBot[i].setTranslateY(200);
+
+            coins[i].setCenterX(-100);
         }
 
         rectangleArrayList.add(rectangleTop[i]);
@@ -314,8 +322,8 @@ public class Main extends Application {
 
         rectangleArrayList = new ArrayList<Rectangle>();
         coinsArrayList = new ArrayList<>();
-        position = new int[pipeCount];
-        scoreCheck = new boolean[pipeCount];
+        position = new int[PIPE_COUNT];
+        scoreCheck = new boolean[PIPE_COUNT];
         //Sets the text for the start instructions
         text = new Text("Press W to start");
         text.setTranslateY(-50);
@@ -330,7 +338,7 @@ public class Main extends Application {
 
         int counter = 0;
         //Gets a rextangle for the pipes
-        for (int i = 0; i < pipeCount; i++) {
+        for (int i = 0; i < PIPE_COUNT; i++) {
             rectangleTop[i] = new Rectangle();
             rectangleBot[i] = new Rectangle();
             coins[i] = new Circle();
@@ -349,7 +357,7 @@ public class Main extends Application {
             setSize(i, counter);
         }
         //Gets the pipes and coines
-        for (int i = 0; i < pipeCount; i++) {
+        for (int i = 0; i < PIPE_COUNT; i++) {
             game.getChildren().add(rectangleTop[i]);
             game.getChildren().add(rectangleBot[i]);
             game.getChildren().add(coins[i]);
@@ -362,7 +370,7 @@ public class Main extends Application {
         gravity = -5.1;
         birdView.setManaged(false);
         hitbox.setManaged(false);
-        for (int i = 0; i < pipeCount; i++) {
+        for (int i = 0; i < PIPE_COUNT; i++) {
             rectangleTop[i].setManaged(false);
             rectangleBot[i].setManaged(false);
             coins[i].setManaged(false);
@@ -397,63 +405,57 @@ public class Main extends Application {
                 // calls on update method and updates the position of the bird
                 update();
 
-                /* As the gravity increases, the rotation changes
-                 * gravity = 0-2, no rotation
-                 * gravity = -5, -30 degree rotation
-                 * gravity = -3, -20 degree rotation
-                 * gravity = -1, -10 degree rotation
+                /*
+                 * As the gravity increases, the rotation changes
+                 * gravity = 1, 10 degree rotation
+                 * gravity = 2, 20 degree rotation
+                 * gravity = n, n*10 degree rotation
                  * etc...
                  */
-                if (gravity >= 0 && gravity < 2) {
-                    birdView.setRotate(0);
-                    hitbox.setRotate(0);
-                } else if (gravity > -6 && gravity < -4) {
-                    birdView.setRotate(-30);
-                    hitbox.setRotate(-30);
-                } else if (gravity > -4 && gravity < -2) {
-                    birdView.setRotate(-20);
-                    hitbox.setRotate(-20);
-                } else if (gravity > -2 && gravity < 0) {
-                    birdView.setRotate(-10);
-                    hitbox.setRotate(-10);
-                } else if (gravity >= 2 && gravity < 2.5) {
-                    birdView.setRotate(10);
-                    hitbox.setRotate(10);
-                } else if (gravity >= 2.5 && gravity < 3) {
-                    birdView.setRotate(20);
-                    hitbox.setRotate(20);
-                } else if (gravity >= 3 && gravity < 3.5) {
-                    birdView.setRotate(30);
-                    hitbox.setRotate(30);
-                } else if (gravity >= 3.5 && gravity < 4) {
-                    birdView.setRotate(40);
-                    hitbox.setRotate(40);
-                } else if (gravity >= 4.5 && gravity < 5) {
-                    birdView.setRotate(50);
-                    hitbox.setRotate(50);
-                } else if (gravity >= 5 && gravity < 5.5) {
-                    birdView.setRotate(60);
-                    hitbox.setRotate(60);
-                } else if (gravity >= 5.5 && gravity < 6) {
-                    birdView.setRotate(70);
-                    hitbox.setRotate(70);
-                } else if (gravity >= 6 && gravity < 6.5) {
-                    birdView.setRotate(80);
-                    hitbox.setRotate(80);
-                } else if (gravity >= 6.5 && gravity < 7) {
-                    birdView.setRotate(90);
-                    hitbox.setRotate(90);
-                }
+                birdView.setRotate(gravity*10);
+                hitbox.setRotate(gravity*10);
             }
 
 
         };
 
     }
+
     //Updates the location of the bird
     public void update() {
         birdView.setY(birdView.getY() + gravity);
         hitbox.setCenterY(hitbox.getCenterY() + gravity);
+    }
+    /*
+     * Collision detection for hitbox (of bird) and pipes
+     * This method goes through all the pipes and checks if the current pipe
+     * is intersecting with the bird
+     */
+    public boolean birdCollidesPipe(Ellipse hitbox) {
+        boolean collision = false;
+        for (Rectangle rect : rectangleArrayList) {
+            if (hitbox.getBoundsInParent().intersects(rect.getBoundsInParent())) {
+                collision = true;
+            }
+        }
+        return collision;
+    }
+
+    /*
+     * Checks for the intersection of coins with the hitbox (of bird)
+     * If the bird DOES intersect with the coin, it sets collected to true
+     * and sets the position of the coin to x = 100000. We did this so that it
+     * no longer intersects with the bird.
+     */
+    public boolean coinCollected(Ellipse hitbox) {
+        boolean collected = false;
+        for (Circle coins : coinsArrayList) {
+            if (hitbox.getBoundsInParent().intersects(coins.getBoundsInParent())) {
+                collected = true;
+                coins.setCenterX(100000);
+            }
+        }
+        return collected;
     }
     /*
      * Checkes if the coin is collected
@@ -473,7 +475,7 @@ public class Main extends Application {
         }
 
         if (move) { // if game is still running, continue
-            for (int i = 0; i < pipeCount; i++) {
+            for (int i = 0; i < PIPE_COUNT; i++) {
                 rectangleTop[i].setX(rectangleTop[i].getX() - 2.2); // moves top pipe by 2.2 units to the left every iteration
                 rectangleBot[i].setX(rectangleBot[i].getX() - 2.2); // moves bottom pipe by 2.2 units to the left every iteration
                 coins[i].setCenterX(coins[i].getCenterX() - 3.5);
@@ -556,42 +558,10 @@ public class Main extends Application {
         if (hitbox.getCenterY() >= 110) {
             flag = false;
         }
-        if (checkBounds(hitbox)) {
+        if (birdCollidesPipe(hitbox)) {
             flag = false;
         }
         return flag;
-    }
-
-    /*
-     * Collision detection for hitbox (of bird) and pipes
-     * This method goes through all the pipes and checks if the current pipe
-     * is intersecting with the bird
-     */
-    public boolean checkBounds(Ellipse hitbox) {
-        boolean collision = false;
-        for (Rectangle rect : rectangleArrayList) {
-            if (hitbox.getBoundsInParent().intersects(rect.getBoundsInParent())) {
-                collision = true;
-            }
-        }
-        return collision;
-    }
-
-    /*
-     * Checks for the intersection of coins with the hitbox (of bird)
-     * If the bird DOES intersect with the coin, it sets collected to true
-     * and sets the position of the coin to x = 100000. We did this so that it
-     * no longer intersects with the bird.
-     */
-    public boolean coinCollected(Ellipse hitbox) {
-        boolean collected = false;
-        for (Circle coins : coinsArrayList) {
-            if (hitbox.getBoundsInParent().intersects(coins.getBoundsInParent())) {
-                collected = true;
-                coins.setCenterX(100000);
-            }
-        }
-        return collected;
     }
 
     public static void main(String args[]) {
