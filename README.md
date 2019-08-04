@@ -1,5 +1,6 @@
 # ICS3U - Flappy Birb
 A recreation of the infamous game _Flappy Bird._ In the game you control an object and your goal is to make sure that it goes through a series of obstacles without hitting them by either tapping to go up or not tapping to go down. These obstacles are known as pipes where there will be one at the top of the screen and one of the bottom. The length of the pipes are random but the distance between the upper and lower pipes are constant. The original version of this game was released in 2013. The game continues until the object hits one of the obstacles.
+
 Flappy Bird Wiki: <https://en.wikipedia.org/wiki/Flappy_Bird>
 
 ## Installation
