@@ -17,15 +17,15 @@ Everything you see is either cited in `Main.java` or written by ourselves
  
  ## Credits
  - Music:
-    > Sound Effects: https://www.sounds-resource.com/mobile/flappybird/sound/5309/
-    > Background Music: https://www.youtube.com/watch?v=cD8EPdn5Ctg
+    - Sound Effects: https://www.sounds-resource.com/mobile/flappybird/sound/5309/
+    - Background Music: https://www.youtube.com/watch?v=cD8EPdn5Ctg
  - Game Images:
-    > Font: https://www.dafont.com/flappybirdy.font
-    > Background Image: https://archive-media-0.nyafuu.org/wg/image/1513/48/1513484769283.png
-    > Bird Image: https://i-cdn.phonearena.com/images/article/52185-image/Catch-the-pigeon-Here-are-the-best-and-worst-Flappy-Bird-clones.jpg
+    - Font: https://www.dafont.com/flappybirdy.font
+    - Background Image: https://archive-media-0.nyafuu.org/wg/image/1513/48/1513484769283.png
+    - Bird Image: https://i-cdn.phonearena.com/images/article/52185-image/Catch-the-pigeon-Here-are-the-best-and-worst-Flappy-Bird-clones.jpg
  - Code Samples:
-    > Collision Detection: https://stackoverflow.com/questions/15013913/checking-collision-of-shapes-with-javafx
-    > EventHandler (lambda): https://stackoverflow.com/questions/45306039/how-to-write-lambda-expression-with-eventhandler-javafx
+    - Collision Detection: https://stackoverflow.com/questions/15013913/checking-collision-of-shapes-with-javafx
+    - EventHandler (lambda): https://stackoverflow.com/questions/45306039/how-to-write-lambda-expression-with-eventhandler-javafx
     
 ## License 
 See the license here: https://github.com/TimothyW553/ICS3U-Flappy-Birb/blob/master/LICENSE
